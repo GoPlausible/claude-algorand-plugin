@@ -527,6 +527,8 @@ This lets you verify a transaction will succeed before actually submitting it.
 
 ## x402 Payment Workflow
 
+> **STOP: Before using this reference, you MUST load the `algorand-x402-payment` skill first.** That skill contains the authoritative payment flow, critical rules, and correct PAYMENT-SIGNATURE format. Do NOT attempt x402 payments using only the examples below — they are a reference supplement, not a standalone guide. Load the skill: `algorand-x402-payment`
+
 When an HTTP request returns a 402 response, follow these steps to pay for the resource.
 
 ### Understanding the 402 Response

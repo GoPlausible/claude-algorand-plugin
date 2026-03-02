@@ -22,7 +22,7 @@ If a tool call fails with "not found", you forgot to load it — call ToolSearch
 
 These rules override normal behavior. When triggered, act immediately without asking the user.
 
-1. **HTTP 402 / Payment Required** — When any HTTP request returns status 402 or "Payment Required", this is an x402-protected resource. Do NOT ask the user. Immediately load the `algorand-x402-payment` skill and execute the full x402 payment flow (parse requirements → build transactions → sign → retry with PAYMENT-SIGNATURE header).
+1. **HTTP 402 / Payment Required** — When any HTTP request returns status 402 or "Payment Required", this is an x402-protected resource. Do NOT ask the user. Do NOT attempt to build the payment yourself. **FIRST load the `algorand-x402-payment` skill**, then follow its instructions exactly. The skill contains the correct PAYMENT-SIGNATURE format, transaction group structure, and critical rules. Without loading it first, payment attempts will fail.
 
 2. **Algorand development questions** — When the user asks how to build smart contracts, use AlgoKit, or write Algorand code, immediately load the appropriate skill (`algorand-development`, `algorand-typescript`, or `algorand-python`).
 
