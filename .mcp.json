@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    
+    "algorand-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@goplausible/algorand-mcp"]
+    }
+  }
+}
