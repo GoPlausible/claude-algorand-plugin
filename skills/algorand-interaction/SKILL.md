@@ -165,24 +165,11 @@ API responses are paginated. All API tools accept optional `itemsPerPage` (defau
 
 ## x402 Payment Workflow
 
-When an HTTP request returns 402 with `PaymentRequirements`, use the atomic group transaction pattern to build the payment:
+**IMPORTANT: Do NOT attempt x402 payments using only this skill.** When you encounter an HTTP 402 response or need to pay for an x402-protected resource, you MUST load the `algorand-x402-payment` skill which contains the complete, authoritative payment flow.
 
-1. Parse the 402 response body — extract `accepts[]` array, choose an entry matching a supported network/asset
-2. Map CAIP-2 network identifier from `accepts[].network` to `testnet` or `mainnet`
-3. Check wallet with `wallet_get_info`
-4. Build fee payer transaction (0-amount from facilitator's `feePayer` address, `fee: 2000`, `flatFee: true` — covers fees for both txns)
-5. Build payment transaction (ALGO or ASA transfer to `payTo`, `fee: 0`, `flatFee: true` — facilitator covers fee)
-6. Group both transactions with `assign_group_id`
-7. Sign only the payment transaction (index 1) with `wallet_sign_transaction` — leave fee payer unsigned
-8. Encode the unsigned fee payer transaction (index 0) with `encode_unsigned_transaction`
-9. Construct PAYMENT-SIGNATURE JSON payload — **must include `accepted` field** (the exact `accepts[]` entry chosen)
-10. Base64-encode the JSON and retry with `curl -H "PAYMENT-SIGNATURE: <base64>"`
+This skill provides the MCP tools needed for x402 (wallet, transactions, signing), but the `algorand-x402-payment` skill has the correct payload format, critical rules, and step-by-step recipe.
 
-**Critical**: The `accepted` field is REQUIRED. It must be an exact copy of the `accepts[]` entry you chose to pay with (including all fields: scheme, network, price, payTo, asset, maxAmountRequired, extra, etc.). Without it, the server cannot match your payment and will reject with 402.
-
-**Critical — Base64 blob handling**: When constructing the PAYMENT-SIGNATURE via shell/curl, NEVER manually copy-paste base64 blob strings inline into a JSON string. Base64 blobs are long and even a single character corruption (e.g., `5` → `4`) causes "signature does not match sender" errors. ALWAYS store each blob (`bytes` from `encode_unsigned_transaction`, `blob` from `wallet_sign_transaction`) in a separate shell variable first, then interpolate via `${VAR}`. Use `printf '%s'` (not `echo`) and `tr -d '\n'` to strip macOS base64 newlines.
-
-For the full step-by-step workflow, load the `algorand-x402-payment` skill or see [references/examples-algorand-mcp.md](references/examples-algorand-mcp.md).
+For reference examples, see [references/examples-algorand-mcp.md](references/examples-algorand-mcp.md).
 
 ## References
 
