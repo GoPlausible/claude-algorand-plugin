@@ -28,7 +28,7 @@ This repo is both the plugin **and** a self-contained marketplace. Add it, then 
 
 ```
 /plugin marketplace add GoPlausible/claude-algorand-plugin
-/plugin install algorand-plugin@goplausible-algorand
+/plugin install algorand-plugin@goplausible-claude-plugins
 ```
 
 **From local clone (for development):**
@@ -39,7 +39,7 @@ git clone https://github.com/GoPlausible/claude-algorand-plugin.git
 Then inside Claude Code:
 ```
 /plugin marketplace add /path/to/claude-algorand-plugin
-/plugin install algorand-plugin@goplausible-algorand
+/plugin install algorand-plugin@goplausible-claude-plugins
 ```
 
 ### From directory (development/testing)
