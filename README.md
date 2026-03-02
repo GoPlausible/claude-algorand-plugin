@@ -61,6 +61,12 @@ npm install -g @goplausible/algorand-mcp
 # or let npx handle it automatically on first use
 ```
 
+### Update
+
+```
+/plugin update algorand-plugin@goplausible-claude-plugins
+```
+
 ### Validate installation
 
 After installing, verify the plugin is loaded:
