@@ -64,6 +64,7 @@ npm install -g @goplausible/algorand-mcp
 ### Update
 
 ```
+/plugin marketplace update
 /plugin update algorand-plugin@goplausible-claude-plugins
 ```
 
