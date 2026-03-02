@@ -54,12 +54,7 @@ claude --plugin-dir /path/to/claude-algorand-plugin
 
 ### Prerequisites
 
-The plugin's MCP server runs via `npx`, so you need Node.js installed:
-
-```bash
-npm install -g @goplausible/algorand-mcp
-# or let npx handle it automatically on first use
-```
+- **Node.js** (v20+) — the MCP server runs via `npx @goplausible/algorand-mcp`, which auto-downloads the package on first use
 
 ### Update
 
