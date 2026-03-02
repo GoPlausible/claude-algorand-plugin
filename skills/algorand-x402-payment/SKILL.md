@@ -13,6 +13,10 @@ You (Claude) are the x402 client. When you encounter an HTTP 402 response with `
 - User asks to access a paid/protected API or resource
 - User mentions x402, payment-required, or paid endpoint access
 
+## MANDATORY: Read reference before constructing payment
+
+**You MUST read [references/x402-payment-flow.md](references/x402-payment-flow.md) before constructing any PAYMENT-SIGNATURE.** Do NOT rely on your training data for the payload format — it is likely wrong. The reference file contains the exact, tested format.
+
 ## Quick Flow
 
 1. `curl` the URL → detect 402, parse `accepts[]`
@@ -25,8 +29,25 @@ You (Claude) are the x402 client. When you encounter an HTTP 402 response with `
 8. `assign_group_id` → group [feePayer@0, payment@1]
 9. `wallet_sign_transaction` → sign payment only (index 1)
 10. `encode_unsigned_transaction` → encode fee payer (index 0)
-11. Construct PAYMENT-SIGNATURE JSON (include `accepted` field)
+11. Construct PAYMENT-SIGNATURE JSON — **exact format below**
 12. `curl -H 'PAYMENT-SIGNATURE: <base64>'` → retry, get 200
+
+## PAYMENT-SIGNATURE JSON Format (EXACT — do not deviate)
+
+```json
+{
+  "x402Version": 2,
+  "scheme": "exact",
+  "network": "<CAIP-2 network identifier from accepts>",
+  "payload": {
+    "paymentGroup": ["<base64 from encode_unsigned_transaction>", "<base64 from wallet_sign_transaction>"],
+    "paymentIndex": 1
+  },
+  "accepted": { <verbatim copy of chosen accepts[] entry> }
+}
+```
+
+**WARNING: The payload field is `paymentGroup` — an array of two base64 strings [unsigned_fee_payer, signed_payment]. Do NOT use `transactions`, do NOT use an array of objects. Any other format will be rejected.**
 
 ## CAIP-2 Network Mapping
 
