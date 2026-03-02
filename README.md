@@ -20,19 +20,55 @@ Algorand blockchain integration for [Claude Code](https://claude.ai/code) — by
 
 ## Installation
 
-### From directory
+### From marketplace (recommended)
+
+This repo is both the plugin **and** a self-contained marketplace. Add it, then install:
+
+**From GitHub (for any user):**
+
+```
+/plugin marketplace add GoPlausible/claude-algorand-plugin
+/plugin install algorand-plugin@goplausible-algorand
+```
+
+**From local clone (for development):**
+
+```bash
+git clone https://github.com/GoPlausible/claude-algorand-plugin.git
+```
+Then inside Claude Code:
+```
+/plugin marketplace add /path/to/claude-algorand-plugin
+/plugin install algorand-plugin@goplausible-algorand
+```
+
+### From directory (development/testing)
+
+For quick testing without installation, load directly:
 
 ```bash
 claude --plugin-dir /path/to/claude-algorand-plugin
 ```
 
+> **Note**: `--plugin-dir` is session-scoped — the plugin is only loaded for that session. Use marketplace installation for persistent access from any directory.
+
 ### Prerequisites
 
-The plugin's MCP server runs via `npx`, so you need:
+The plugin's MCP server runs via `npx`, so you need Node.js installed:
 
 ```bash
 npm install -g @goplausible/algorand-mcp
 # or let npx handle it automatically on first use
+```
+
+### Validate installation
+
+After installing, verify the plugin is loaded:
+
+```
+/plugin list                  # Should show algorand-plugin
+/mcp                          # Should show algorand-mcp server
+/algorand-plugin:algorand-interaction   # Should load the interaction skill
 ```
 
 ## Auto-Allow MCP Tools (Recommended)

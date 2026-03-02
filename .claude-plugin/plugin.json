@@ -28,7 +28,6 @@
     "skills/algorand-x402-python",
     "skills/algorand-x402-payment"
   ],
-  "mcpServers": "./.mcp.json",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,

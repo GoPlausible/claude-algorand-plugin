@@ -1,0 +1,30 @@
+{
+  "name": "goplausible",
+  "owner": {
+    "name": "GoPlausible",
+    "email": "info@goplausible.com"
+  },
+  "metadata": {
+    "description": "Algorand blockchain plugins for Claude Code — by GoPlausible"
+  },
+  "plugins": [
+    {
+      "name": "algorand-plugin",
+      "description": "Algorand blockchain integration with MCP and skills — wallet, transactions, smart contracts, AlgoKit, indexer, DEX, NFD, x402 payments",
+      "source": "./",
+      "homepage": "https://goplausible.com",
+      "repository": "https://github.com/GoPlausible/claude-algorand-plugin",
+      "license": "MIT",
+      "keywords": [
+        "algorand",
+        "blockchain",
+        "mcp",
+        "skills",
+        "x402",
+        "typescript",
+        "python"
+      ],
+      "category": "blockchain"
+    }
+  ]
+}
