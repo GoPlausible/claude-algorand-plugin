@@ -1,11 +1,11 @@
 ---
 name: algorand-interaction
-description: Interact with Algorand blockchain via the Algorand MCP server — wallet operations, ALGO/ASA transactions, smart contracts, account info, NFD lookups, atomic groups, Tinyman swaps, TEAL compilation, knowledge base. Use when user asks about Algorand wallet, balances, sending ALGO or tokens, asset opt-in, transactions, NFD names, DEX swaps, smart contracts, or account details.
+description: Interact with Algorand blockchain via the Algorand MCP server — wallet operations, ALGO/ASA transactions, smart contracts, account info, NFD lookups, atomic groups, Tinyman swaps, Haystack Router best-price swaps, TEAL compilation, knowledge base. Use when user asks about Algorand wallet, balances, sending ALGO or tokens, asset opt-in, transactions, NFD names, DEX swaps, DEX aggregation, best-price routing, smart contracts, or account details.
 ---
 
 # Algorand MCP Interaction
 
-Interact with Algorand blockchain through the Algorand MCP server (101 tools across 11 categories).
+Interact with Algorand blockchain through the Algorand MCP server (104 tools across 12 categories).
 
 ## Key Characteristics
 
@@ -135,6 +135,22 @@ For atomic (all-or-nothing) multi-transaction groups:
 | 3 | `wallet_sign_transaction_group` | Sign all transactions in group with wallet |
 | 4 | `send_raw_transaction` | Submit all signed transactions |
 
+## Best-Price Swap via Haystack Router (DEX Aggregator)
+
+Haystack Router aggregates quotes across multiple Algorand DEXes (Tinyman, Pact, Folks) and LST protocols (tALGO, xALGO) to find the optimal swap route.
+
+| Step | Tool | Purpose |
+|------|------|---------|
+| 1 | `wallet_get_info` | Verify active account, check balance |
+| 2 | `api_haystack_needs_optin` | Check if address needs opt-in for the target asset |
+| 3 | `wallet_optin_asset` | Opt-in if needed |
+| 4 | `api_haystack_get_swap_quote` | Preview best-price quote — show user output, USD values, route, price impact |
+| 5 | User confirms | Always confirm before executing |
+| 6 | `api_haystack_execute_swap` | All-in-one: quote + sign via wallet + submit + confirm |
+
+> For detailed Haystack Router workflows (batch swaps, configuration, slippage guidance), load the `haystack-router-interaction` skill.
+> For building swap UIs or integrating the `@txnlab/haystack-router` SDK, load the `haystack-router-development` skill.
+
 ## Tool Categories
 
 **Wallet** (10): `wallet_add_account`, `wallet_remove_account`, `wallet_list_accounts`, `wallet_switch_account`, `wallet_get_info`, `wallet_get_assets`, `wallet_sign_transaction`, `wallet_sign_transaction_group`, `wallet_sign_data`, `wallet_optin_asset`
@@ -154,6 +170,8 @@ For atomic (all-or-nothing) multi-transaction groups:
 **NFDomains** (6): `api_nfd_get_nfd`, `api_nfd_get_nfds_for_addresses`, `api_nfd_get_nfd_activity`, `api_nfd_get_nfd_analytics`, `api_nfd_browse_nfds`, `api_nfd_search_nfds`
 
 **Tinyman DEX** (9): `api_tinyman_get_pool`, `api_tinyman_get_pool_analytics`, `api_tinyman_get_pool_creation_quote`, `api_tinyman_get_liquidity_quote`, `api_tinyman_get_remove_liquidity_quote`, `api_tinyman_get_swap_quote`, `api_tinyman_get_asset_optin_quote`, `api_tinyman_get_validator_optin_quote`, `api_tinyman_get_validator_optout_quote`
+
+**Haystack Router** (3): `api_haystack_get_swap_quote`, `api_haystack_execute_swap`, `api_haystack_needs_optin`
 
 **ARC-26 URI** (1): `generate_algorand_uri`
 
@@ -207,3 +225,4 @@ When using NFD (`.algo` names), always use the `depositAccount` field from the N
 - [GoPlausible x402-avm Examples template Projects](https://github.com/GoPlausible/x402-avm/tree/branch-v2-algorand-publish/examples/)
 - [CAIP-2 Specification](https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md)
 - [Coinbase x402 Protocol](https://github.com/coinbase/x402)
+- [Haystack Router (TxnLab DEX Aggregator)](https://github.com/TxnLab/haystack-router)

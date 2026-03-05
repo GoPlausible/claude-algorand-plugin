@@ -2,7 +2,7 @@
 
 ## Loading MCP Tools — REQUIRED FIRST STEP
 
-This plugin provides 101 Algorand MCP tools. They are all **deferred** — they exist and the MCP server is connected, but they are NOT in your tool list until you load them via `ToolSearch`.
+This plugin provides 104 Algorand MCP tools. They are all **deferred** — they exist and the MCP server is connected, but they are NOT in your tool list until you load them via `ToolSearch`.
 
 **You MUST call ToolSearch before using any Algorand MCP tool. NEVER say "tools are not available" — they ARE available, just deferred.**
 
@@ -28,11 +28,14 @@ These rules override normal behavior. When triggered, act immediately without as
 
 3. **Blockchain interaction requests** — When the user asks to query accounts, send transactions, swap tokens, or interact with the blockchain, load tools via ToolSearch and use them directly. Load `algorand-interaction` skill if you need guidance on workflows.
 
+4. **DEX aggregation / best-price swaps** — When the user asks to swap tokens with best pricing, use a DEX aggregator, or mentions Haystack Router, load the `haystack-router-interaction` skill and use the Haystack MCP tools (`api_haystack_*`). For building swap UIs or integrating the `@txnlab/haystack-router` SDK into an app, load `haystack-router-development` instead.
+
 ## Plugin Capabilities
 
 1. **Algorand Development** — Smart contracts, typed clients, React frontends via AlgoKit CLI and skills
-2. **Blockchain Interaction** — Algorand MCP server (101 tools) for direct blockchain access
+2. **Blockchain Interaction** — Algorand MCP server (104 tools) for direct blockchain access
 3. **x402 Payment Protocol** — HTTP-native payments with Algorand as first-class chain
+4. **Haystack Router** — DEX aggregator and smart order routing across Algorand DEXes (Tinyman, Pact, Folks) and LST protocols (tALGO, xALGO)
 
 ## Skill Routing
 
@@ -45,10 +48,12 @@ These rules override normal behavior. When triggered, act immediately without as
 | x402 | TypeScript x402 development | `algorand-x402-typescript` |
 | x402 | Python x402 development | `algorand-x402-python` |
 | x402 | Runtime x402 payment (Claude as client) | `algorand-x402-payment` |
+| Haystack | SDK integration, React swap UIs, Node.js automation | `haystack-router-development` |
+| Haystack | Best-price swaps via MCP tools (agent interaction) | `haystack-router-interaction` |
 
 Skills are auto-discovered — Claude invokes them based on task context or via `/skill-name`. Agent `algorand-agent` can be invoked for complex multi-step Algorand tasks.
 
-## MCP Tool Categories (101 tools)
+## MCP Tool Categories (104 tools)
 
 - **Wallet** (10) — `wallet_add_account`, `wallet_remove_account`, `wallet_list_accounts`, `wallet_switch_account`, `wallet_get_info`, `wallet_get_assets`, `wallet_sign_transaction`, `wallet_sign_transaction_group`, `wallet_sign_data`, `wallet_optin_asset`
 - **Account Management** (8) — `create_account`, `rekey_account`, `mnemonic_to_mdk`, `mdk_to_mnemonic`, `secret_key_to_mnemonic`, `mnemonic_to_secret_key`, `seed_from_mnemonic`, `mnemonic_from_seed`
@@ -59,6 +64,7 @@ Skills are auto-discovered — Claude invokes them based on task context or via 
 - **Indexer API** (17) — `api_indexer_lookup_account_by_id`, `api_indexer_lookup_account_assets`, `api_indexer_lookup_account_app_local_states`, `api_indexer_lookup_account_created_applications`, `api_indexer_search_for_accounts`, `api_indexer_lookup_applications`, `api_indexer_lookup_application_logs`, `api_indexer_search_for_applications`, `api_indexer_lookup_application_box`, `api_indexer_lookup_application_boxes`, `api_indexer_lookup_asset_by_id`, `api_indexer_lookup_asset_balances`, `api_indexer_lookup_asset_transactions`, `api_indexer_search_for_assets`, `api_indexer_lookup_transaction_by_id`, `api_indexer_lookup_account_transactions`, `api_indexer_search_for_transactions`
 - **NFDomains** (6) — `api_nfd_get_nfd`, `api_nfd_get_nfds_for_addresses`, `api_nfd_get_nfd_activity`, `api_nfd_get_nfd_analytics`, `api_nfd_browse_nfds`, `api_nfd_search_nfds`
 - **Tinyman AMM** (9) — `api_tinyman_get_pool`, `api_tinyman_get_pool_analytics`, `api_tinyman_get_pool_creation_quote`, `api_tinyman_get_liquidity_quote`, `api_tinyman_get_remove_liquidity_quote`, `api_tinyman_get_swap_quote`, `api_tinyman_get_asset_optin_quote`, `api_tinyman_get_validator_optin_quote`, `api_tinyman_get_validator_optout_quote`
+- **Haystack Router** (3) — `api_haystack_get_swap_quote`, `api_haystack_execute_swap`, `api_haystack_needs_optin`
 - **ARC-26 URI** (1) — `generate_algorand_uri`
 - **Knowledge** (1) — `get_knowledge_doc` (categories: `arcs`, `sdks`, `algokit`, `algokit-utils`, `tealscript`, `puya`, `liquid-auth`, `python`, `developers`, `clis`, `nodes`, `details`)
 
@@ -92,6 +98,9 @@ Skills are auto-discovered — Claude invokes them based on task context or via 
 
 **Swap on Tinyman:**
 `api_tinyman_get_swap_quote` → build txns from quote → `wallet_sign_transaction_group` → `send_raw_transaction`
+
+**Best-price swap via Haystack Router (DEX aggregator):**
+`wallet_get_info` → `api_haystack_needs_optin` (check opt-in) → `api_haystack_get_swap_quote` (preview quote, show user) → user confirms → `api_haystack_execute_swap` (all-in-one: quote + sign + submit). Load skill: `haystack-router-interaction`
 
 **Atomic group:**
 `make_*_txn` (multiple) → `assign_group_id` → `wallet_sign_transaction_group` → `send_raw_transaction`
@@ -147,3 +156,4 @@ On HTTP 402 with `accepts[]`: parse requirements → map CAIP-2 → `wallet_get_
 - GoPlausible x402-avm Examples template Projects : https://github.com/GoPlausible/x402-avm/tree/branch-v2-algorand-publish/examples/
 - CAIP-2 Specification : https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md
 - Coinbase x402 Protocol : https://github.com/coinbase/x402
+- Haystack Router (TxnLab DEX Aggregator) : https://github.com/TxnLab/haystack-router

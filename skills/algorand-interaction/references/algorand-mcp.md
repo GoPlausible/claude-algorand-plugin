@@ -14,8 +14,9 @@
 7. [Indexer API Tools](#indexer-api-tools)
 8. [NFDomains API Tools](#nfdomains-api-tools)
 9. [Tinyman DEX API Tools](#tinyman-dex-api-tools)
-10. [ARC-26 URI Tools](#arc-26-uri-tools)
-11. [Knowledge Base Tools](#knowledge-base-tools)
+10. [Haystack Router Tools](#haystack-router-tools)
+11. [ARC-26 URI Tools](#arc-26-uri-tools)
+12. [Knowledge Base Tools](#knowledge-base-tools)
 
 ---
 
@@ -688,6 +689,55 @@ Decentralized exchange operations on Tinyman AMM.
 ### api_tinyman_get_validator_optout_quote
 - **Purpose**: Get a quote for opting out of the Tinyman validator
 - **Parameters**: Validator opt-out parameters
+
+---
+
+## Haystack Router Tools
+
+DEX aggregator for best-price swaps across multiple Algorand DEXes (Tinyman, Pact, Folks) and LST protocols (tALGO, xALGO). For detailed workflows, load the `haystack-router-interaction` skill.
+
+### api_haystack_get_swap_quote
+- **Purpose**: Get a best-price swap quote aggregated across multiple DEXes
+- **Parameters**:
+```json
+{
+  "fromASAID": 0,
+  "toASAID": 31566704,
+  "amount": 1000000,
+  "address": "ALGO_ADDRESS",
+  "type": "fixed-input",
+  "network": "testnet"
+}
+```
+- **Returns**: Expected output, USD values, price impact, route details, protocol fees, required opt-ins
+> `type`: `"fixed-input"` (default, specify input amount) or `"fixed-output"` (specify desired output amount)
+> All amounts in base units (microAlgos / smallest ASA unit)
+
+### api_haystack_execute_swap
+- **Purpose**: All-in-one swap execution — gets quote, signs via wallet, submits, and confirms
+- **Parameters**:
+```json
+{
+  "fromASAID": 0,
+  "toASAID": 31566704,
+  "amount": 1000000,
+  "slippage": 0.5,
+  "network": "testnet"
+}
+```
+- **Returns**: Status, confirmed round, transaction IDs, signer, quote details, swap summary
+
+### api_haystack_needs_optin
+- **Purpose**: Check if an address needs to opt-in to an asset before swapping
+- **Parameters**:
+```json
+{
+  "address": "ALGO_ADDRESS",
+  "assetId": 31566704,
+  "network": "testnet"
+}
+```
+- **Returns**: `{ needsOptIn: boolean }`
 
 ---
 

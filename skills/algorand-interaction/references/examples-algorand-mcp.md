@@ -396,6 +396,93 @@ api_tinyman_get_pool {
 }
 ```
 
+### Get pool analytics (volume, TVL, fees)
+```
+api_tinyman_get_pool_analytics {
+  "asset1Id": 0,
+  "asset2Id": 31566704,
+  "network": "mainnet"
+}
+```
+
+> For more Tinyman workflows (liquidity, pool creation, validator opt-in/out), use the Tinyman tools directly. For best-price swaps across multiple DEXes, use Haystack Router below.
+
+---
+
+## Haystack Router — Best-Price Swap (DEX Aggregator)
+
+Haystack Router aggregates quotes across Tinyman, Pact, Folks, and LST protocols to find the optimal swap route. For detailed configuration and batch workflows, load the `haystack-router-interaction` skill.
+
+### Quick swap (2 steps)
+
+#### Step 1: Check wallet
+```
+wallet_get_info { "network": "testnet" }
+```
+
+#### Step 2: Execute swap (all-in-one)
+```
+api_haystack_execute_swap {
+  "fromASAID": 0,
+  "toASAID": 31566704,
+  "amount": 1000000,
+  "slippage": 0.5,
+  "network": "testnet"
+}
+```
+> This gets the best quote, signs via wallet, submits, and confirms — all in one call.
+
+### Recommended workflow with preview (4 steps)
+
+#### Step 1: Check wallet
+```
+wallet_get_info { "network": "testnet" }
+```
+
+#### Step 2: Check if opt-in is needed
+```
+api_haystack_needs_optin {
+  "address": "[wallet_address]",
+  "assetId": 31566704,
+  "network": "testnet"
+}
+```
+If `needsOptIn` is true:
+```
+wallet_optin_asset { "assetId": 31566704, "network": "testnet" }
+```
+
+#### Step 3: Preview quote (show user before executing)
+```
+api_haystack_get_swap_quote {
+  "fromASAID": 0,
+  "toASAID": 31566704,
+  "amount": 1000000,
+  "address": "[wallet_address]",
+  "network": "testnet"
+}
+```
+> Show user: expected output, USD values, route, price impact. **Always confirm before executing.**
+
+#### Step 4: Execute after user confirms
+```
+api_haystack_execute_swap {
+  "fromASAID": 0,
+  "toASAID": 31566704,
+  "amount": 1000000,
+  "slippage": 0.5,
+  "network": "testnet"
+}
+```
+
+### Slippage guidance
+
+| Pair Type | Recommended Slippage |
+|-----------|---------------------|
+| ALGO ↔ USDC (deep liquidity) | 0.1–0.5% |
+| Major ASAs | 0.5–1% |
+| Low-liquidity pairs | 1–3% |
+
 ---
 
 ## Using the Knowledge Base
