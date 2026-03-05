@@ -2,7 +2,7 @@
 
 ## Loading MCP Tools — REQUIRED FIRST STEP
 
-This plugin provides 104 Algorand MCP tools. They are all **deferred** — they exist and the MCP server is connected, but they are NOT in your tool list until you load them via `ToolSearch`.
+This plugin provides 107 Algorand MCP tools. They are all **deferred** — they exist and the MCP server is connected, but they are NOT in your tool list until you load them via `ToolSearch`.
 
 **You MUST call ToolSearch before using any Algorand MCP tool. NEVER say "tools are not available" — they ARE available, just deferred.**
 
@@ -33,7 +33,7 @@ These rules override normal behavior. When triggered, act immediately without as
 ## Plugin Capabilities
 
 1. **Algorand Development** — Smart contracts, typed clients, React frontends via AlgoKit CLI and skills
-2. **Blockchain Interaction** — Algorand MCP server (104 tools) for direct blockchain access
+2. **Blockchain Interaction** — Algorand MCP server (107 tools) for direct blockchain access
 3. **x402 Payment Protocol** — HTTP-native payments with Algorand as first-class chain
 4. **Haystack Router** — DEX aggregator and smart order routing across Algorand DEXes (Tinyman, Pact, Folks) and LST protocols (tALGO, xALGO)
 
@@ -53,7 +53,7 @@ These rules override normal behavior. When triggered, act immediately without as
 
 Skills are auto-discovered — Claude invokes them based on task context or via `/skill-name`. Agent `algorand-agent` can be invoked for complex multi-step Algorand tasks.
 
-## MCP Tool Categories (104 tools)
+## MCP Tool Categories (107 tools)
 
 - **Wallet** (10) — `wallet_add_account`, `wallet_remove_account`, `wallet_list_accounts`, `wallet_switch_account`, `wallet_get_info`, `wallet_get_assets`, `wallet_sign_transaction`, `wallet_sign_transaction_group`, `wallet_sign_data`, `wallet_optin_asset`
 - **Account Management** (8) — `create_account`, `rekey_account`, `mnemonic_to_mdk`, `mdk_to_mnemonic`, `secret_key_to_mnemonic`, `mnemonic_to_secret_key`, `seed_from_mnemonic`, `mnemonic_from_seed`
@@ -65,6 +65,7 @@ Skills are auto-discovered — Claude invokes them based on task context or via 
 - **NFDomains** (6) — `api_nfd_get_nfd`, `api_nfd_get_nfds_for_addresses`, `api_nfd_get_nfd_activity`, `api_nfd_get_nfd_analytics`, `api_nfd_browse_nfds`, `api_nfd_search_nfds`
 - **Tinyman AMM** (9) — `api_tinyman_get_pool`, `api_tinyman_get_pool_analytics`, `api_tinyman_get_pool_creation_quote`, `api_tinyman_get_liquidity_quote`, `api_tinyman_get_remove_liquidity_quote`, `api_tinyman_get_swap_quote`, `api_tinyman_get_asset_optin_quote`, `api_tinyman_get_validator_optin_quote`, `api_tinyman_get_validator_optout_quote`
 - **Haystack Router** (3) — `api_haystack_get_swap_quote`, `api_haystack_execute_swap`, `api_haystack_needs_optin`
+- **Pera Asset Verification** (3) — `api_pera_asset_verification_status`, `api_pera_verified_asset_details`, `api_pera_verified_asset_search`
 - **ARC-26 URI** (1) — `generate_algorand_uri`
 - **Knowledge** (1) — `get_knowledge_doc` (categories: `arcs`, `sdks`, `algokit`, `algokit-utils`, `tealscript`, `puya`, `liquid-auth`, `python`, `developers`, `clis`, `nodes`, `details`)
 
@@ -139,6 +140,7 @@ On HTTP 402 with `accepts[]`: parse requirements → map CAIP-2 → `wallet_get_
 - **NEVER use PyTEAL or Beaker** — these are legacy. Use Algorand TypeScript or Algorand Python.
 - **NEVER use AlgoExplorer** — obsolete. Use Allo.info for block/account/transaction data.
 - **NFD (.algo names)**: Always use `depositAccount` field for transactions.
+- **Asset verification**: Before transacting unknown ASAs, check `api_pera_asset_verification_status` — tiers: `verified`, `trusted`, `suspicious`, `unverified`. Warn user about suspicious/unverified assets.
 
 ## External resources
 

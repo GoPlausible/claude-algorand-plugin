@@ -485,6 +485,36 @@ api_haystack_execute_swap {
 
 ---
 
+## Pera Asset Verification
+
+Verify asset legitimacy before transacting. Mainnet only — uses Pera Wallet's verification database.
+
+### Check if an asset is verified
+```
+api_pera_asset_verification_status {
+  "assetId": 31566704
+}
+```
+> Returns verification tier: `verified`, `trusted`, `suspicious`, or `unverified`. Warn user about suspicious/unverified assets before proceeding.
+
+### Get detailed asset info (name, USD value, logo, supply)
+```
+api_pera_verified_asset_details {
+  "assetId": 31566704
+}
+```
+
+### Search for verified assets by name
+```
+api_pera_verified_asset_search {
+  "query": "USDC",
+  "verifiedOnly": true
+}
+```
+> Set `verifiedOnly: true` to filter out suspicious and unverified assets.
+
+---
+
 ## Using the Knowledge Base
 
 ### Get a specific document

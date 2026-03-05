@@ -1,11 +1,11 @@
 ---
 name: algorand-interaction
-description: Interact with Algorand blockchain via the Algorand MCP server — wallet operations, ALGO/ASA transactions, smart contracts, account info, NFD lookups, atomic groups, Tinyman swaps, Haystack Router best-price swaps, TEAL compilation, knowledge base. Use when user asks about Algorand wallet, balances, sending ALGO or tokens, asset opt-in, transactions, NFD names, DEX swaps, DEX aggregation, best-price routing, smart contracts, or account details.
+description: Interact with Algorand blockchain via the Algorand MCP server — wallet operations, ALGO/ASA transactions, smart contracts, account info, NFD lookups, atomic groups, Tinyman swaps, Haystack Router best-price swaps, Pera asset verification, TEAL compilation, knowledge base. Use when user asks about Algorand wallet, balances, sending ALGO or tokens, asset opt-in, transactions, NFD names, DEX swaps, DEX aggregation, best-price routing, asset verification, smart contracts, or account details.
 ---
 
 # Algorand MCP Interaction
 
-Interact with Algorand blockchain through the Algorand MCP server (104 tools across 12 categories).
+Interact with Algorand blockchain through the Algorand MCP server (107 tools across 13 categories).
 
 ## Key Characteristics
 
@@ -75,7 +75,7 @@ Before ANY transaction:
 | goETH | 386192725 | 8 |
 | goBTC | 386195940 | 8 |
 
-> Always verify asset IDs on-chain — scam tokens use similar names.
+> Always verify asset IDs on-chain — scam tokens use similar names. Use `api_pera_asset_verification_status` to check verification tier before transacting unknown assets.
 
 ## Amounts and Decimals
 
@@ -172,6 +172,8 @@ Haystack Router aggregates quotes across multiple Algorand DEXes (Tinyman, Pact,
 **Tinyman DEX** (9): `api_tinyman_get_pool`, `api_tinyman_get_pool_analytics`, `api_tinyman_get_pool_creation_quote`, `api_tinyman_get_liquidity_quote`, `api_tinyman_get_remove_liquidity_quote`, `api_tinyman_get_swap_quote`, `api_tinyman_get_asset_optin_quote`, `api_tinyman_get_validator_optin_quote`, `api_tinyman_get_validator_optout_quote`
 
 **Haystack Router** (3): `api_haystack_get_swap_quote`, `api_haystack_execute_swap`, `api_haystack_needs_optin`
+
+**Pera Asset Verification** (3): `api_pera_asset_verification_status`, `api_pera_verified_asset_details`, `api_pera_verified_asset_search`
 
 **ARC-26 URI** (1): `generate_algorand_uri`
 

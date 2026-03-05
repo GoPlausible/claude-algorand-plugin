@@ -15,8 +15,9 @@
 8. [NFDomains API Tools](#nfdomains-api-tools)
 9. [Tinyman DEX API Tools](#tinyman-dex-api-tools)
 10. [Haystack Router Tools](#haystack-router-tools)
-11. [ARC-26 URI Tools](#arc-26-uri-tools)
-12. [Knowledge Base Tools](#knowledge-base-tools)
+11. [Pera Asset Verification Tools](#pera-asset-verification-tools)
+12. [ARC-26 URI Tools](#arc-26-uri-tools)
+13. [Knowledge Base Tools](#knowledge-base-tools)
 
 ---
 
@@ -738,6 +739,36 @@ DEX aggregator for best-price swaps across multiple Algorand DEXes (Tinyman, Pac
 }
 ```
 - **Returns**: `{ needsOptIn: boolean }`
+
+---
+
+## Pera Asset Verification Tools
+
+Verify asset legitimacy and get detailed asset information from Pera Wallet's mainnet database. Use these to protect users from scam tokens.
+
+### api_pera_asset_verification_status
+- **Purpose**: Check the verification tier of a mainnet asset (verified, trusted, suspicious, unverified)
+- **Parameters**: `{ "assetId": 31566704 }`
+- **Returns**: `{ asset_id, verification_tier, explorer_url }`
+> Tiers: `verified` (highest), `trusted`, `suspicious` (warn user), `unverified` (unknown)
+> Mainnet only — uses Pera Wallet's verification database
+
+### api_pera_verified_asset_details
+- **Purpose**: Get detailed asset info including name, decimals, total supply, USD value, logo, verification tier, and collectible status
+- **Parameters**: `{ "assetId": 31566704 }`
+- **Returns**: Full asset details from Pera Wallet database
+
+### api_pera_verified_asset_search
+- **Purpose**: Search assets by name, unit name, or keyword with optional verification filter
+- **Parameters**:
+```json
+{
+  "query": "USDC",
+  "verifiedOnly": true
+}
+```
+- **Returns**: Array of matching assets with `{ asset_id, name, unit_name, decimals, verification_tier, usd_value, logo, creator_address, is_deleted }`
+> Set `verifiedOnly: true` to only return `verified` or `trusted` assets
 
 ---
 
