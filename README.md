@@ -41,7 +41,7 @@ claude --plugin-dir /path/to/claude-algorand-plugin
 
 ### Prerequisites
 
-- **Node.js** (v20+) — the MCP server runs via `npx @goplausible/algorand-mcp`, which auto-downloads the package on first use
+- **Node.js** (v20+) — the MCP server runs via `npx @goplausible/algorand-mcp@latest`, which auto-downloads the package on first use
 
 ### Update
 
