@@ -103,6 +103,12 @@ Skills are auto-discovered — Claude invokes them based on task context or via 
 **Best-price swap via Haystack Router (DEX aggregator):**
 `wallet_get_info` → `api_haystack_needs_optin` (check opt-in) → `api_haystack_get_swap_quote` (preview quote, show user) → user confirms → `api_haystack_execute_swap` (all-in-one: quote + sign + submit). Load skill: `haystack-router-interaction`
 
+> **CRITICAL — Swap direction (`type` parameter):**
+> - **"Buy 10 ALGO with USDC"** → user wants **exactly 10 ALGO out** → `type: "fixed-output"`, `amount: 10000000`, `fromASAID: USDC`, `toASAID: ALGO`
+> - **"Sell 10 ALGO for USDC"** / **"Swap 10 ALGO to USDC"** → user wants to **spend exactly 10 ALGO** → `type: "fixed-input"`, `amount: 10000000`, `fromASAID: ALGO`, `toASAID: USDC`
+> - **"Buy USDC for 10 ALGO"** / **"Use 10 ALGO to buy USDC"** → user specifies **exact input** → `type: "fixed-input"`, `amount: 10000000`, `fromASAID: ALGO`, `toASAID: USDC`
+> - Rule: **"buy X of Y"** = fixed-output (exact output). **"swap/sell/use X of Y"** = fixed-input (exact input). Never guess — if ambiguous, ask the user.
+
 **Atomic group:**
 `make_*_txn` (multiple) → `assign_group_id` → `wallet_sign_transaction_group` → `send_raw_transaction`
 

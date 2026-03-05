@@ -51,6 +51,33 @@ const result = await swap.execute()
 
 The SDK is the **only** supported integration path. Do not call the API directly.
 
+## CRITICAL: Swap Direction (`type` parameter)
+
+The `type` parameter determines whether `amount` is the exact input or the exact output. **Getting this wrong means the user spends or receives the wrong amount.**
+
+- **`fixed-input`** (default): `amount` = **exact input** the user spends. Output varies by market price.
+  - Use when: "sell 10 ALGO", "swap 10 ALGO to USDC", "use 10 ALGO to buy USDC"
+- **`fixed-output`**: `amount` = **exact output** the user receives. Input varies by market price.
+  - Use when: "buy 10 ALGO", "get me 10 USDC", "I want exactly 5 ALGO"
+
+**Rule: "Buy X of Y" = fixed-output (user wants exactly X). "Sell/swap/use X of Y" = fixed-input (user spends exactly X). If ambiguous, ask.**
+
+```typescript
+// "Sell 10 ALGO for USDC" — user spends exactly 10 ALGO
+const quote = await router.newQuote({
+  fromASAID: 0, toASAID: 31566704,
+  amount: 10_000_000, type: 'fixed-input',
+})
+// quote.quote = USDC received (variable)
+
+// "Buy 10 USDC with ALGO" — user receives exactly 10 USDC
+const quote = await router.newQuote({
+  fromASAID: 0, toASAID: 31566704,
+  amount: 10_000_000, type: 'fixed-output',
+})
+// quote.amount = ALGO required (variable)
+```
+
 ## Key Concepts
 
 - **Amounts** are always in base units (microAlgos for ALGO, smallest unit for ASAs)

@@ -413,24 +413,53 @@ api_tinyman_get_pool_analytics {
 
 Haystack Router aggregates quotes across Tinyman, Pact, Folks, and LST protocols to find the optimal swap route. For detailed configuration and batch workflows, load the `haystack-router-interaction` skill.
 
-### Quick swap (2 steps)
+### CRITICAL: Swap Direction (`type` parameter)
+
+The `type` parameter controls whether `amount` is exact input or exact output. **Wrong direction = wrong amount spent/received.**
+
+| User says | `type` | `amount` is | `fromASAID` | `toASAID` |
+|-----------|--------|-------------|-------------|-----------|
+| "Buy 10 ALGO with USDC" | `"fixed-output"` | 10000000 (desired output) | USDC | ALGO |
+| "Sell 10 ALGO for USDC" | `"fixed-input"` | 10000000 (exact spend) | ALGO | USDC |
+| "Swap 10 ALGO to USDC" | `"fixed-input"` | 10000000 (exact spend) | ALGO | USDC |
+| "Use 10 ALGO to buy USDC" | `"fixed-input"` | 10000000 (exact spend) | ALGO | USDC |
+| "Buy USDC for 10 ALGO" | `"fixed-input"` | 10000000 (exact spend) | ALGO | USDC |
+
+**Rule: "buy X of Y" = fixed-output. "sell/swap/use X of Y" = fixed-input. If ambiguous, ask.**
+
+### Example: fixed-input ("Swap 1 ALGO to USDC" — spend exactly 1 ALGO)
 
 #### Step 1: Check wallet
 ```
 wallet_get_info { "network": "testnet" }
 ```
 
-#### Step 2: Execute swap (all-in-one)
+#### Step 2: Execute swap
 ```
 api_haystack_execute_swap {
   "fromASAID": 0,
   "toASAID": 31566704,
   "amount": 1000000,
+  "type": "fixed-input",
   "slippage": 0.5,
   "network": "testnet"
 }
 ```
-> This gets the best quote, signs via wallet, submits, and confirms — all in one call.
+> User spends exactly 1 ALGO. Output USDC varies based on market price.
+
+### Example: fixed-output ("Buy 1 USDC with ALGO" — receive exactly 1 USDC)
+
+```
+api_haystack_execute_swap {
+  "fromASAID": 0,
+  "toASAID": 31566704,
+  "amount": 1000000,
+  "type": "fixed-output",
+  "slippage": 0.5,
+  "network": "testnet"
+}
+```
+> User receives exactly 1 USDC. Input ALGO varies based on market price.
 
 ### Recommended workflow with preview (4 steps)
 
@@ -458,11 +487,13 @@ api_haystack_get_swap_quote {
   "fromASAID": 0,
   "toASAID": 31566704,
   "amount": 1000000,
+  "type": "fixed-input",
   "address": "[wallet_address]",
   "network": "testnet"
 }
 ```
 > Show user: expected output, USD values, route, price impact. **Always confirm before executing.**
+> Set `type` based on user intent — see direction table above.
 
 #### Step 4: Execute after user confirms
 ```
@@ -470,6 +501,7 @@ api_haystack_execute_swap {
   "fromASAID": 0,
   "toASAID": 31566704,
   "amount": 1000000,
+  "type": "fixed-input",
   "slippage": 0.5,
   "network": "testnet"
 }

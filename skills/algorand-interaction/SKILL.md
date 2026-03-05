@@ -148,6 +148,12 @@ Haystack Router aggregates quotes across multiple Algorand DEXes (Tinyman, Pact,
 | 5 | User confirms | Always confirm before executing |
 | 6 | `api_haystack_execute_swap` | All-in-one: quote + sign via wallet + submit + confirm |
 
+> **CRITICAL — Swap direction (`type` parameter):**
+> - **"Buy 10 ALGO"** → user wants exactly 10 ALGO **out** → `type: "fixed-output"`, `amount` = 10000000
+> - **"Sell/swap 10 ALGO"** → user spends exactly 10 ALGO → `type: "fixed-input"`, `amount` = 10000000
+> - **"Buy USDC for 10 ALGO"** → user spends exactly 10 ALGO → `type: "fixed-input"`, `amount` = 10000000
+> - Rule: **"buy X of Y" = fixed-output**. **"sell/swap/use X of Y" = fixed-input**. If ambiguous, ask.
+
 > For detailed Haystack Router workflows (batch swaps, configuration, slippage guidance), load the `haystack-router-interaction` skill.
 > For building swap UIs or integrating the `@txnlab/haystack-router` SDK, load the `haystack-router-development` skill.
 

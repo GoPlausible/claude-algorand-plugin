@@ -711,7 +711,11 @@ DEX aggregator for best-price swaps across multiple Algorand DEXes (Tinyman, Pac
 }
 ```
 - **Returns**: Expected output, USD values, price impact, route details, protocol fees, required opt-ins
-> `type`: `"fixed-input"` (default, specify input amount) or `"fixed-output"` (specify desired output amount)
+> **CRITICAL — `type` determines swap direction:**
+> - `"fixed-input"` (default): `amount` = exact input user **spends**. Output varies. Use for "sell/swap/use X".
+> - `"fixed-output"`: `amount` = exact output user **receives**. Input varies. Use for "buy X".
+> - **"Buy 10 ALGO with USDC"** → `type: "fixed-output"`, `amount: 10000000`, `fromASAID: USDC`, `toASAID: ALGO`
+> - **"Swap 10 ALGO to USDC"** → `type: "fixed-input"`, `amount: 10000000`, `fromASAID: ALGO`, `toASAID: USDC`
 > All amounts in base units (microAlgos / smallest ASA unit)
 
 ### api_haystack_execute_swap
@@ -722,11 +726,13 @@ DEX aggregator for best-price swaps across multiple Algorand DEXes (Tinyman, Pac
   "fromASAID": 0,
   "toASAID": 31566704,
   "amount": 1000000,
+  "type": "fixed-input",
   "slippage": 0.5,
   "network": "testnet"
 }
 ```
 - **Returns**: Status, confirmed round, transaction IDs, signer, quote details, swap summary
+> `type`: Same rules as `api_haystack_get_swap_quote` — "buy X" = `"fixed-output"`, "sell/swap X" = `"fixed-input"`
 
 ### api_haystack_needs_optin
 - **Purpose**: Check if an address needs to opt-in to an asset before swapping

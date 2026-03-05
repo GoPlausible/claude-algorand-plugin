@@ -50,30 +50,44 @@ quote.createdAt // number — timestamp (ms)
 quote.address // string | undefined — user address if provided
 ```
 
-## Quote Types
+## Quote Types — CRITICAL: Choosing the Right Direction
 
-**Fixed-input** (default): Specify exact input amount, receive variable output.
+**Getting `type` wrong means the user spends or receives the wrong amount. Parse user intent carefully.**
+
+| User says | `type` | `amount` is |
+|-----------|--------|-------------|
+| "Buy 10 ALGO with USDC" | `'fixed-output'` | 10_000_000 (the ALGO — desired output) |
+| "Sell 10 ALGO for USDC" | `'fixed-input'` | 10_000_000 (the ALGO — exact spend) |
+| "Swap 10 ALGO to USDC" | `'fixed-input'` | 10_000_000 (the ALGO — exact spend) |
+| "Use 10 ALGO to buy USDC" | `'fixed-input'` | 10_000_000 (the ALGO — exact spend) |
+| "Buy USDC for 10 ALGO" | `'fixed-input'` | 10_000_000 (the ALGO — exact spend) |
+
+**Rule: "Buy X of Y" = fixed-output. "Sell/swap/use X of Y" = fixed-input. If ambiguous, ask the user.**
+
+### Fixed-input (default): User specifies exact input, output varies
 
 ```typescript
+// "Sell 10 ALGO for USDC" — user spends exactly 10 ALGO
 const quote = await router.newQuote({
   fromASAID: 0,
   toASAID: 31566704,
-  amount: 1_000_000, // Exact: send 1 ALGO
+  amount: 10_000_000, // Exact input: spend 10 ALGO
   type: 'fixed-input',
 })
-// quote.quote = expected USDC received
+// quote.quote = USDC received (variable based on market)
 ```
 
-**Fixed-output**: Specify desired output, send variable input.
+### Fixed-output: User specifies exact output, input varies
 
 ```typescript
+// "Buy 10 USDC with ALGO" — user receives exactly 10 USDC
 const quote = await router.newQuote({
   fromASAID: 0,
   toASAID: 31566704,
-  amount: 1_000_000, // Exact: receive 1 USDC
+  amount: 10_000_000, // Exact output: receive 10 USDC
   type: 'fixed-output',
 })
-// quote.quote = ALGO required to send
+// quote.amount = ALGO required to spend (variable based on market)
 ```
 
 ## Displaying Quote Data

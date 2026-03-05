@@ -52,6 +52,33 @@ For best UX, preview the quote before executing:
    → Returns confirmed result with exact summary
 ```
 
+## CRITICAL: Swap Direction (`type` parameter)
+
+The `type` parameter on both `api_haystack_get_swap_quote` and `api_haystack_execute_swap` controls whether `amount` is exact input or exact output. **Wrong direction = wrong amount spent/received.**
+
+- **`"fixed-input"`** (default): `amount` = exact input the user **spends**. Output varies.
+  - "Sell 10 ALGO", "Swap 10 ALGO to USDC", "Use 10 ALGO to buy USDC", "Buy USDC for 10 ALGO"
+- **`"fixed-output"`**: `amount` = exact output the user **receives**. Input varies.
+  - "Buy 10 ALGO", "Buy 10 USDC with ALGO", "Get me exactly 5 USDC"
+
+**Rule: "Buy X of Y" = fixed-output. "Sell/swap/use X of Y" = fixed-input. If ambiguous, ask.**
+
+```
+// "Sell 10 ALGO for USDC" — user spends exactly 10 ALGO
+→ api_haystack_execute_swap {
+    fromASAID: 0, toASAID: 31566704,
+    amount: 10000000, type: "fixed-input",
+    slippage: 1, network: "mainnet"
+  }
+
+// "Buy 10 USDC with ALGO" — user receives exactly 10 USDC
+→ api_haystack_execute_swap {
+    fromASAID: 0, toASAID: 31566704,
+    amount: 10000000, type: "fixed-output",
+    slippage: 1, network: "mainnet"
+  }
+```
+
 ## Important Rules
 
 - **Always check wallet first** — Use `wallet_get_info` to confirm address, balance, and network
@@ -60,6 +87,7 @@ For best UX, preview the quote before executing:
 - **Check opt-in for ASAs** — Use `api_haystack_needs_optin` + `wallet_optin_asset` if needed
 - **Default to testnet** — Unless user explicitly requests mainnet
 - **Handle quote staleness** — Quotes are time-sensitive; execute promptly after user confirms
+- **Set `type` correctly** — Parse user intent for fixed-input vs fixed-output (see above)
 
 ## Slippage Guidance
 
