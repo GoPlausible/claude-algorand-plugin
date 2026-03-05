@@ -674,25 +674,20 @@ wallet_get_info { "network": "<network>" }
 
 The facilitator sponsors fees for the entire group. The fee payer's `fee` must equal **N × 1000 µAlgo** (N = total transactions in group). For a 2-txn group: fee = 2 × 1000 = **2000**.
 
-> **Note**: `make_payment_txn` does NOT accept `fee`/`flatFee` as input params. Build the txn first, then **patch the returned JSON object** before grouping.
-
 ```
 make_payment_txn {
   "from": "<feePayer>",
   "to": "<feePayer>",
   "amount": 0,
+  "fee": 2000,
+  "flatFee": true,
   "network": "<network>"
 }
-```
-Then patch the returned transaction object:
-```
-fee_payer_txn["fee"] = 2000       // N × 1000 µAlgo (2 txns × 1000)
-fee_payer_txn["flatFee"] = true   // prevent SDK from overriding
 ```
 
 ### Step 3: Build payment transaction
 
-The payment transaction fee is 0 since the facilitator covers it. Build the txn, then patch `fee` to 0:
+The payment transaction fee is 0 since the facilitator covers it.
 
 **For native ALGO (asset = "0"):**
 ```
@@ -700,6 +695,8 @@ make_payment_txn {
   "from": "<your_address>",
   "to": "<payTo>",
   "amount": <maxAmountRequired>,
+  "fee": 0,
+  "flatFee": true,
   "network": "<network>"
 }
 ```
@@ -711,13 +708,10 @@ make_asset_transfer_txn {
   "to": "<payTo>",
   "assetIndex": <asset>,
   "amount": <maxAmountRequired>,
+  "fee": 0,
+  "flatFee": true,
   "network": "<network>"
 }
-```
-Then patch the returned transaction object:
-```
-payment_txn["fee"] = 0            // fee payer covers this
-payment_txn["flatFee"] = true     // prevent SDK from overriding
 ```
 
 ### Step 4: Group the transactions

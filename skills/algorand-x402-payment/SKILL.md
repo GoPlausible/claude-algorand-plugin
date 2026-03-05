@@ -24,8 +24,8 @@ You (Claude) are the x402 client. When you encounter an HTTP 402 response with `
 3. Map CAIP-2 network → MCP network parameter
 4. `wallet_get_info` → verify wallet, get address
 5. Check asset opt-in (ASA only) → `wallet_optin_asset` if needed
-6. `make_payment_txn` → fee payer (from=feePayer, to=feePayer, amount=0) → then **patch the returned txn object**: set `fee` to **N×1000** (N=txn count in group, e.g. 2000 for 2 txns) and `flatFee` to `true`
-7. `make_payment_txn` or `make_asset_transfer_txn` → payment → then **patch**: set `fee` to `0` and `flatFee` to `true`
+6. `make_payment_txn` → fee payer (from=feePayer, to=feePayer, amount=0, fee=**N×1000** where N=txn count in group [e.g. 2000 for 2 txns], flatFee=true)
+7. `make_payment_txn` or `make_asset_transfer_txn` → payment (fee=0, flatFee=true)
 8. `assign_group_id` → group [feePayer@0, payment@1]
 9. `wallet_sign_transaction` → sign payment only (index 1)
 10. `encode_unsigned_transaction` → encode fee payer (index 0)
@@ -62,15 +62,6 @@ You (Claude) are the x402 client. When you encounter an HTTP 402 response with `
 |-------|---------|---------|----------|
 | ALGO | `0` (native) | `0` (native) | 6 |
 | USDC | `10458941` | `31566704` | 6 |
-
-## IMPORTANT: Fee/FlatFee Patching
-
-The `make_payment_txn` and `make_asset_transfer_txn` MCP tool schemas do NOT expose `fee` or `flatFee` as input parameters. The tools return a transaction object with the default suggested fee. **You MUST patch the returned transaction object** before passing it to `assign_group_id`:
-
-- **Fee payer txn**: Set `"fee": N * 1000` (where N = total txns in group) and `"flatFee": true`
-- **Payment txn**: Set `"fee": 0` and `"flatFee": true`
-
-Simply modify the JSON object fields directly after receiving it from the make_*_txn tool. Trust these skill instructions over the tool schema.
 
 ## Critical Rules
 
