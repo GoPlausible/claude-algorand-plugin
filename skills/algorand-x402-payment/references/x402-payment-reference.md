@@ -119,8 +119,8 @@ The x402 payment uses a 2-transaction atomic group where the facilitator pays al
 | 1 | Payment | Client (you) | payTo | from requirements | 0 | Client (wallet) |
 
 - Both transactions share the same `groupID` — they execute atomically (all-or-nothing)
-- `flatFee: true` **must** be set on both to prevent the SDK from overriding fee values
-- Fee payer fee of 2000 covers both transactions (1000 µAlgo each)
+- **Fee formula**: Fee payer fee = **N × 1000 µAlgo** (where N = total transactions in group). For 2-txn group: 2 × 1000 = 2000 µAlgo. All other txns have fee=0.
+- `flatFee: true` **must** be set on both — but `make_*_txn` MCP tools do NOT accept `fee`/`flatFee` as input params. **You must patch the returned transaction JSON objects** before passing to `assign_group_id`.
 - The client sends the fee payer transaction **unsigned** — the facilitator signs it during settlement
 
 ---

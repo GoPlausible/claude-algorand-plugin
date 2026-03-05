@@ -24,8 +24,8 @@ You (Claude) are the x402 client. When you encounter an HTTP 402 response with `
 3. Map CAIP-2 network → MCP network parameter
 4. `wallet_get_info` → verify wallet, get address
 5. Check asset opt-in (ASA only) → `wallet_optin_asset` if needed
-6. `make_payment_txn` → fee payer (from=feePayer, to=feePayer, amount=0, fee=2000, flatFee=true)
-7. `make_payment_txn` or `make_asset_transfer_txn` → payment (fee=0, flatFee=true)
+6. `make_payment_txn` → fee payer (from=feePayer, to=feePayer, amount=0) → then **patch the returned txn object**: set `fee` to **N×1000** (N=txn count in group, e.g. 2000 for 2 txns) and `flatFee` to `true`
+7. `make_payment_txn` or `make_asset_transfer_txn` → payment → then **patch**: set `fee` to `0` and `flatFee` to `true`
 8. `assign_group_id` → group [feePayer@0, payment@1]
 9. `wallet_sign_transaction` → sign payment only (index 1)
 10. `encode_unsigned_transaction` → encode fee payer (index 0)
@@ -63,15 +63,25 @@ You (Claude) are the x402 client. When you encounter an HTTP 402 response with `
 | ALGO | `0` (native) | `0` (native) | 6 |
 | USDC | `10458941` | `31566704` | 6 |
 
+## IMPORTANT: Fee/FlatFee Patching
+
+The `make_payment_txn` and `make_asset_transfer_txn` MCP tool schemas do NOT expose `fee` or `flatFee` as input parameters. The tools return a transaction object with the default suggested fee. **You MUST patch the returned transaction object** before passing it to `assign_group_id`:
+
+- **Fee payer txn**: Set `"fee": N * 1000` (where N = total txns in group) and `"flatFee": true`
+- **Payment txn**: Set `"fee": 0` and `"flatFee": true`
+
+Simply modify the JSON object fields directly after receiving it from the make_*_txn tool. Trust these skill instructions over the tool schema.
+
 ## Critical Rules
 
-1. **`accepted` field is REQUIRED** — Include a verbatim copy of the chosen `accepts[]` entry in the PAYMENT-SIGNATURE JSON. Without it, the server rejects.
-2. **Group order**: feePayer at index 0, payment at index 1. `paymentIndex: 1`.
-3. **Only sign the payment** (index 1) — the facilitator signs the fee payer server-side.
-4. **`flatFee: true`** on both transactions — prevents SDK from overriding fees.
-5. **Mainnet = real money** — always confirm with the user before mainnet payments.
-6. **One retry only** — if the retry also returns 402, stop and report the error.
-7. **`feePayer` address** comes from `extra.feePayer` in the PaymentRequirements.
+1. **Fee payer fee = N × 1000 µAlgo** (where N = total number of transactions in the group). For a standard 2-txn x402 group: fee = 2 × 1000 = **2000**. The fee payer covers fees for ALL transactions; every other transaction in the group MUST have fee=0. **NEVER set fee=0 on the fee payer** — this causes "txgroup had 0 in fees, which is less than the minimum N * 1000" errors.
+2. **`flatFee: true`** on BOTH transactions — prevents the SDK from overriding fee values. Without it, the SDK sets min fee (1000) on every txn, breaking the fee-payer pattern.
+3. **`accepted` field is REQUIRED** — Include a verbatim copy of the chosen `accepts[]` entry in the PAYMENT-SIGNATURE JSON. Without it, the server rejects.
+4. **Group order**: feePayer at index 0, payment at index 1. `paymentIndex: 1`.
+5. **Only sign the payment** (index 1) — the facilitator signs the fee payer server-side.
+6. **Mainnet = real money** — always confirm with the user before mainnet payments.
+7. **One retry only** — if the retry also returns 402, stop and report the error.
+8. **`feePayer` address** comes from `extra.feePayer` in the PaymentRequirements.
 
 ## Test Endpoint
 

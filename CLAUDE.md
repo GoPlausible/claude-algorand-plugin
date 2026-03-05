@@ -108,11 +108,13 @@ Skills are auto-discovered — Claude invokes them based on task context or via 
 
 **x402 payment (Claude as client):**
 On HTTP 402 with `accepts[]`: parse requirements → map CAIP-2 → `wallet_get_info` → check opt-in →
-`make_payment_txn` (feePayer, amount=0, fee=2000, flatFee=true) →
-`make_asset_transfer_txn` or `make_payment_txn` (payment, fee=0, flatFee=true) →
+`make_payment_txn` (feePayer, amount=0) → **patch returned txn: fee=N×1000 (N=group size, e.g. 2000 for 2 txns), flatFee=true** →
+`make_asset_transfer_txn` or `make_payment_txn` (payment) → **patch returned txn: fee=0, flatFee=true** →
 `assign_group_id` [feePayer@0, payment@1] → `wallet_sign_transaction` (payment@1 only) →
 `encode_unsigned_transaction` (feePayer@0) → construct PAYMENT-SIGNATURE JSON (include `accepted` field) →
 `curl -H` retry. Load skill: `algorand-x402-payment`
+
+> **Note**: `make_*_txn` tools do NOT accept `fee`/`flatFee` as input params. You MUST patch the returned transaction JSON object before grouping.
 
 > **CRITICAL — x402 Base64 blob handling**: When constructing `PAYMENT-SIGNATURE` via shell/curl, NEVER manually copy-paste base64 blobs inline into JSON. Even a single character corruption causes "signature does not match sender" errors. ALWAYS store blobs (`bytes` from `encode_unsigned_transaction`, `blob` from `wallet_sign_transaction`) in separate shell variables first, then interpolate via `${VAR}`. Use `printf '%s'` and `tr -d '\n'` to strip macOS base64 newlines.
 

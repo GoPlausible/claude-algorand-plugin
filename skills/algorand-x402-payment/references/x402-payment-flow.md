@@ -98,22 +98,28 @@ Also verify the wallet has sufficient balance for the payment amount.
 
 ## Step 6: Build Fee Payer Transaction
 
-The facilitator sponsors fees for the entire atomic group. This is a self-payment with zero amount but covers fees for both transactions:
+The facilitator sponsors fees for the entire atomic group. The fee payer transaction's fee must equal **N × 1000 µAlgo**, where N is the total number of transactions in the group. For the standard 2-transaction x402 group: fee = 2 × 1000 = **2000 µAlgo**.
 
 ```
 make_payment_txn {
   "from": "<feePayer>",
   "to": "<feePayer>",
   "amount": 0,
-  "fee": 2000,
-  "flatFee": true,
   "network": "<mcp_network>"
 }
 ```
 
-> `flatFee: true` is critical — without it, the SDK overrides the fee to the minimum (1000), which won't cover both transactions.
+> **IMPORTANT — Schema limitation**: The `make_payment_txn` tool schema does NOT accept `fee` or `flatFee` as input parameters. The tool returns a transaction object with the default suggested fee (1000). **You MUST patch the returned JSON object** before passing it to `assign_group_id`:
 
-Save the returned transaction object as `fee_payer_txn`.
+**After receiving the transaction object, modify it:**
+```
+Set fee_payer_txn["fee"] = 2000    (N × 1000, where N = number of txns in group)
+Set fee_payer_txn["flatFee"] = true
+```
+
+> **CRITICAL**: The fee payer's `fee` MUST cover ALL transactions in the group (N × 1000 µAlgo minimum). Setting fee=0 or fee=1000 on the fee payer causes: `"txgroup had 0 in fees, which is less than the minimum 2 * 1000"`. Every other transaction in the group MUST have fee=0.
+
+Save the patched transaction object as `fee_payer_txn`.
 
 ---
 
@@ -125,8 +131,6 @@ make_payment_txn {
   "from": "<wallet_address>",
   "to": "<payTo>",
   "amount": <amount>,
-  "fee": 0,
-  "flatFee": true,
   "network": "<mcp_network>"
 }
 ```
@@ -138,15 +142,19 @@ make_asset_transfer_txn {
   "to": "<payTo>",
   "assetIndex": <asset>,
   "amount": <amount>,
-  "fee": 0,
-  "flatFee": true,
   "network": "<mcp_network>"
 }
 ```
 
-> `fee: 0` + `flatFee: true` ensures the fee payer covers this transaction's fee.
+**After receiving the transaction object, patch it:**
+```
+Set payment_txn["fee"] = 0
+Set payment_txn["flatFee"] = true
+```
 
-Save the returned transaction object as `payment_txn`.
+> `fee: 0` + `flatFee: true` ensures the fee payer covers this transaction's fee. The tool returns fee=1000 by default, so you MUST override it to 0.
+
+Save the patched transaction object as `payment_txn`.
 
 ---
 
