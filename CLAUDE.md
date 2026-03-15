@@ -35,7 +35,7 @@ These rules override normal behavior. When triggered, act immediately without as
 ## Plugin Capabilities
 
 1. **Algorand Development** — Smart contracts, typed clients, React frontends via AlgoKit CLI and skills
-2. **Blockchain Interaction** — Algorand MCP server (107 tools) for direct blockchain access
+2. **Blockchain Interaction** — Algorand MCP server (121 tools) for direct blockchain access
 3. **x402 Payment Protocol** — HTTP-native payments with Algorand as first-class chain
 4. **Haystack Router** — DEX aggregator and smart order routing across Algorand DEXes (Tinyman, Pact, Folks) and LST protocols (tALGO, xALGO)
 5. **Alpha Arcade** — On-chain prediction markets on Algorand (USDC-denominated, binary/multi-choice)
