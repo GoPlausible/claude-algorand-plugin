@@ -133,7 +133,7 @@ Or add to `~/.claude/settings.json`:
 | Indexer API | 17 | `api_indexer_search_for_transactions`, `api_indexer_lookup_asset_by_id` |
 | NFDomains | 6 | `api_nfd_get_nfd`, `api_nfd_search_nfds` |
 | Tinyman AMM | 9 | `api_tinyman_get_swap_quote`, `api_tinyman_get_pool` |
-| ARC-26 URI | 1 | `generate_algorand_uri` |
+| ARC-26 URI | 1 | `generate_algorand_qrcode` |
 | Knowledge | 1 | `get_knowledge_doc` |
 
 ## x402 Payment Protocol

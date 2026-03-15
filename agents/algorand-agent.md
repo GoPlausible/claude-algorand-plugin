@@ -114,8 +114,8 @@ Always confirm with the user which network to use before transactions. Default t
 
 1. **Check wallet**: Call `wallet_get_info` with target network to verify a wallet account exists and is active
 2. **If no accounts**: Guide user to create one with `wallet_add_account` (sets nickname and spending limits)
-3. **If needs funding**: Generate ARC-26 QR with `generate_algorand_uri` or direct to testnet faucet: https://lora.algokit.io/testnet/fund
-4. **If needs USDC funding**: Generate ARC-26 QR with `generate_algorand_uri` or direct to testnet faucet: https://faucet.circle.com/
+3. **If needs funding**: Generate ARC-26 QR with `generate_algorand_qrcode` or direct to testnet faucet: https://lora.algokit.io/testnet/fund
+4. **If needs USDC funding**: Generate ARC-26 QR with `generate_algorand_qrcode` or direct to testnet faucet: https://faucet.circle.com/
 5. **Confirm network**: Always confirm which network before transactions
 
 ### Pre-Transaction Validation
@@ -210,7 +210,7 @@ For atomic (all-or-nothing) multi-transaction groups:
 
 **Tinyman AMM** (9 tools): `api_tinyman_get_pool`, `api_tinyman_get_pool_analytics`, `api_tinyman_get_pool_creation_quote`, `api_tinyman_get_liquidity_quote`, `api_tinyman_get_remove_liquidity_quote`, `api_tinyman_get_swap_quote`, `api_tinyman_get_asset_optin_quote`, `api_tinyman_get_validator_optin_quote`, `api_tinyman_get_validator_optout_quote`
 
-**ARC-26 URI** (1 tool): `generate_algorand_uri`
+**ARC-26 URI** (1 tool): `generate_algorand_qrcode`
 
 **Knowledge Base** (1 tool): `get_knowledge_doc` — categories: `arcs`, `sdks`, `algokit`, `algokit-utils`, `tealscript`, `puya`, `liquid-auth`, `python`, `developers`, `clis`, `nodes`, `details`
 

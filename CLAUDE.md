@@ -66,7 +66,7 @@ Skills are auto-discovered — Claude invokes them based on task context or via 
 - **Tinyman AMM** (9) — `api_tinyman_get_pool`, `api_tinyman_get_pool_analytics`, `api_tinyman_get_pool_creation_quote`, `api_tinyman_get_liquidity_quote`, `api_tinyman_get_remove_liquidity_quote`, `api_tinyman_get_swap_quote`, `api_tinyman_get_asset_optin_quote`, `api_tinyman_get_validator_optin_quote`, `api_tinyman_get_validator_optout_quote`
 - **Haystack Router** (3) — `api_haystack_get_swap_quote`, `api_haystack_execute_swap`, `api_haystack_needs_optin`
 - **Pera Asset Verification** (3) — `api_pera_asset_verification_status`, `api_pera_verified_asset_details`, `api_pera_verified_asset_search`
-- **ARC-26 URI** (1) — `generate_algorand_uri`
+- **ARC-26 URI** (1) — `generate_algorand_qrcode`
 - **Knowledge** (1) — `get_knowledge_doc` (categories: `arcs`, `sdks`, `algokit`, `algokit-utils`, `tealscript`, `puya`, `liquid-auth`, `python`, `developers`, `clis`, `nodes`, `details`)
 
 ## Skills vs MCP Tools
