@@ -2,7 +2,7 @@
 
 ## Loading MCP Tools — REQUIRED FIRST STEP
 
-This plugin provides 107 Algorand MCP tools. They are all **deferred** — they exist and the MCP server is connected, but they are NOT in your tool list until you load them via `ToolSearch`.
+This plugin provides 122 Algorand MCP tools. They are all **deferred** — they exist and the MCP server is connected, but they are NOT in your tool list until you load them via `ToolSearch`.
 
 **You MUST call ToolSearch before using any Algorand MCP tool. NEVER say "tools are not available" — they ARE available, just deferred.**
 
@@ -30,12 +30,15 @@ These rules override normal behavior. When triggered, act immediately without as
 
 4. **DEX aggregation / best-price swaps** — When the user asks to swap tokens with best pricing, use a DEX aggregator, or mentions Haystack Router, load the `haystack-router-interaction` skill and use the Haystack MCP tools (`api_haystack_*`). For building swap UIs or integrating the `@txnlab/haystack-router` SDK into an app, load `haystack-router-development` instead.
 
+5. **Prediction markets / Alpha Arcade** — When the user asks about prediction markets, event betting, YES/NO shares, orderbooks, or Alpha Arcade, load the `alpha-arcade-interaction` skill and use the Alpha Arcade MCP tools (`alpha_*`).
+
 ## Plugin Capabilities
 
 1. **Algorand Development** — Smart contracts, typed clients, React frontends via AlgoKit CLI and skills
 2. **Blockchain Interaction** — Algorand MCP server (107 tools) for direct blockchain access
 3. **x402 Payment Protocol** — HTTP-native payments with Algorand as first-class chain
 4. **Haystack Router** — DEX aggregator and smart order routing across Algorand DEXes (Tinyman, Pact, Folks) and LST protocols (tALGO, xALGO)
+5. **Alpha Arcade** — On-chain prediction markets on Algorand (USDC-denominated, binary/multi-choice)
 
 ## Skill Routing
 
@@ -50,10 +53,11 @@ These rules override normal behavior. When triggered, act immediately without as
 | x402 | Runtime x402 payment (Claude as client) | `algorand-x402-payment` |
 | Haystack | SDK integration, React swap UIs, Node.js automation | `haystack-router-development` |
 | Haystack | Best-price swaps via MCP tools (agent interaction) | `haystack-router-interaction` |
+| Alpha Arcade | Prediction markets via MCP tools | `alpha-arcade-interaction` |
 
 Skills are auto-discovered — Claude invokes them based on task context or via `/skill-name`. Agent `algorand-agent` can be invoked for complex multi-step Algorand tasks.
 
-## MCP Tool Categories (107 tools)
+## MCP Tool Categories (122 tools)
 
 - **Wallet** (10) — `wallet_add_account`, `wallet_remove_account`, `wallet_list_accounts`, `wallet_switch_account`, `wallet_get_info`, `wallet_get_assets`, `wallet_sign_transaction`, `wallet_sign_transaction_group`, `wallet_sign_data`, `wallet_optin_asset`
 - **Account Management** (8) — `create_account`, `rekey_account`, `mnemonic_to_mdk`, `mdk_to_mnemonic`, `secret_key_to_mnemonic`, `mnemonic_to_secret_key`, `seed_from_mnemonic`, `mnemonic_from_seed`
@@ -66,6 +70,7 @@ Skills are auto-discovered — Claude invokes them based on task context or via 
 - **Tinyman AMM** (9) — `api_tinyman_get_pool`, `api_tinyman_get_pool_analytics`, `api_tinyman_get_pool_creation_quote`, `api_tinyman_get_liquidity_quote`, `api_tinyman_get_remove_liquidity_quote`, `api_tinyman_get_swap_quote`, `api_tinyman_get_asset_optin_quote`, `api_tinyman_get_validator_optin_quote`, `api_tinyman_get_validator_optout_quote`
 - **Haystack Router** (3) — `api_haystack_get_swap_quote`, `api_haystack_execute_swap`, `api_haystack_needs_optin`
 - **Pera Asset Verification** (3) — `api_pera_asset_verification_status`, `api_pera_verified_asset_details`, `api_pera_verified_asset_search`
+- **Alpha Arcade** (15) — Read: `alpha_get_live_markets`, `alpha_get_reward_markets`, `alpha_get_market`, `alpha_get_orderbook`, `alpha_get_open_orders`, `alpha_get_positions`. Trade: `alpha_create_limit_order`, `alpha_create_market_order`, `alpha_cancel_order`, `alpha_amend_order`, `alpha_propose_match`, `alpha_split_shares`, `alpha_merge_shares`, `alpha_claim`
 - **ARC-26 URI** (1) — `generate_algorand_qrcode`
 - **Knowledge** (1) — `get_knowledge_doc` (categories: `arcs`, `sdks`, `algokit`, `algokit-utils`, `tealscript`, `puya`, `liquid-auth`, `python`, `developers`, `clis`, `nodes`, `details`)
 
@@ -109,6 +114,11 @@ Skills are auto-discovered — Claude invokes them based on task context or via 
 > - **"Buy USDC for 10 ALGO"** / **"Use 10 ALGO to buy USDC"** → user specifies **exact input** → `type: "fixed-input"`, `amount: 10000000`, `fromASAID: ALGO`, `toASAID: USDC`
 > - Rule: **"buy X of Y"** = fixed-output (exact output). **"swap/sell/use X of Y"** = fixed-input (exact input). Never guess — if ambiguous, ask the user.
 
+**Prediction market trade via Alpha Arcade:**
+`wallet_get_info` → `alpha_get_live_markets` (browse markets) → `alpha_get_orderbook` (check liquidity) → `alpha_create_market_order` or `alpha_create_limit_order` (place order). Load skill: `alpha-arcade-interaction`
+
+> **CRITICAL — Alpha Arcade prices are microunits**: `yesProb`/`noProb` range 0–1,000,000 (NOT percentages). $0.50 = 500,000. Orders require both ALGO (MBR ~0.957 per order) and USDC (collateral). Market orders fill immediately and become positions (`alpha_get_positions`), not open orders.
+
 **Atomic group:**
 `make_*_txn` (multiple) → `assign_group_id` → `wallet_sign_transaction_group` → `send_raw_transaction`
 
@@ -121,6 +131,27 @@ On HTTP 402 with `accepts[]`: parse requirements → map CAIP-2 → `wallet_get_
 `curl -H` retry. Load skill: `algorand-x402-payment`
 
 > **CRITICAL — x402 Base64 blob handling**: When constructing `PAYMENT-SIGNATURE` via shell/curl, NEVER manually copy-paste base64 blobs inline into JSON. Even a single character corruption causes "signature does not match sender" errors. ALWAYS store blobs (`bytes` from `encode_unsigned_transaction`, `blob` from `wallet_sign_transaction`) in separate shell variables first, then interpolate via `${VAR}`. Use `printf '%s'` and `tr -d '\n'` to strip macOS base64 newlines.
+
+## QR Code Display (ARC-26 URI)
+
+When generating QR codes with `generate_algorand_qrcode`, the tool returns a UTF-8 text QR code and a URI string.
+
+**After calling the tool, extract and paste the QR code directly in your response.**
+**Always include both:**
+
+1. **UTF-8 QR block** — Unicode block characters from the tool's text output. Paste inside a code block.
+2. **URI string** — always show this, users need it for wallet deep links.
+
+### Steps to include QR code in reply:
+1. Call the tool and capture output
+2. Content's first array member is text — contains the UTF-8 QR block (Unicode block characters) plus URI string
+3. Include in your reply:
+
+```
+[paste UTF-8 QR here]
+```
+
+URI: `algorand://...`
 
 ## Key Things to Remember
 
@@ -147,6 +178,7 @@ On HTTP 402 with `accepts[]`: parse requirements → map CAIP-2 → `wallet_get_
 - **NEVER use AlgoExplorer** — obsolete. Use Allo.info for block/account/transaction data.
 - **NFD (.algo names)**: Always use `depositAccount` field for transactions.
 - **Asset verification**: Before transacting unknown ASAs, check `api_pera_asset_verification_status` — tiers: `verified`, `trusted`, `suspicious`, `unverified`. Warn user about suspicious/unverified assets.
+- **Alpha Arcade prices are microunits**: `yesProb`/`noProb` range 0–1,000,000 (NOT percentages). $0.50 = 500,000. Orders require both ALGO (MBR) and USDC (collateral).
 
 ## External resources
 
@@ -165,3 +197,5 @@ On HTTP 402 with `accepts[]`: parse requirements → map CAIP-2 → `wallet_get_
 - CAIP-2 Specification : https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md
 - Coinbase x402 Protocol : https://github.com/coinbase/x402
 - Haystack Router (TxnLab DEX Aggregator) : https://github.com/TxnLab/haystack-router
+- Alpha Arcade: https://alphaarcade.com
+- Alpha Arcade API: https://platform.alphaarcade.com

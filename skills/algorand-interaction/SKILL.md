@@ -1,11 +1,11 @@
 ---
 name: algorand-interaction
-description: Interact with Algorand blockchain via the Algorand MCP server — wallet operations, ALGO/ASA transactions, smart contracts, account info, NFD lookups, atomic groups, Tinyman swaps, Haystack Router best-price swaps, Pera asset verification, TEAL compilation, knowledge base. Use when user asks about Algorand wallet, balances, sending ALGO or tokens, asset opt-in, transactions, NFD names, DEX swaps, DEX aggregation, best-price routing, asset verification, smart contracts, or account details.
+description: Interact with Algorand blockchain via the Algorand MCP server — wallet operations, ALGO/ASA transactions, smart contracts, account info, NFD lookups, atomic groups, Tinyman swaps, Haystack Router best-price swaps, Alpha Arcade prediction markets, Pera asset verification, TEAL compilation, knowledge base. Use when user asks about Algorand wallet, balances, sending ALGO or tokens, asset opt-in, transactions, NFD names, DEX swaps, DEX aggregation, best-price routing, prediction markets, Alpha Arcade, asset verification, smart contracts, or account details.
 ---
 
 # Algorand MCP Interaction
 
-Interact with Algorand blockchain through the Algorand MCP server (107 tools across 13 categories).
+Interact with Algorand blockchain through the Algorand MCP server (122 tools across 14 categories).
 
 ## Key Characteristics
 
@@ -157,6 +157,30 @@ Haystack Router aggregates quotes across multiple Algorand DEXes (Tinyman, Pact,
 > For detailed Haystack Router workflows (batch swaps, configuration, slippage guidance), load the `haystack-router-interaction` skill.
 > For building swap UIs or integrating the `@txnlab/haystack-router` SDK, load the `haystack-router-development` skill.
 
+## Alpha Arcade Prediction Markets
+
+Alpha Arcade provides on-chain prediction markets on Algorand. All collateral and payouts are in USDC (ASA 31566704). Prices and quantities use **microunits** (1,000,000 = $1.00 or 1 share).
+
+| Step | Tool | Purpose |
+|------|------|---------|
+| 1 | `wallet_get_info` | Verify active account, check ALGO + USDC balances |
+| 2 | `alpha_get_live_markets` | Browse available markets (or `alpha_get_reward_markets` for rewarded markets) |
+| 3 | `alpha_get_orderbook` | Check available liquidity for a specific market |
+| 4 | `alpha_create_market_order` | Auto-match at best price (fills immediately → becomes position) |
+| 4alt | `alpha_create_limit_order` | Place at specific price (rests on orderbook until matched) |
+| 5 | `alpha_get_positions` | Check token balances (filled orders) |
+| 5alt | `alpha_get_open_orders` | Check unfilled limit orders |
+
+> **CRITICAL — Prices are microunits, NOT percentages**: `yesProb`/`noProb` range 0–1,000,000. $0.50 = 500,000. Dividing by 100 instead of 1,000,000 causes uint64 overflow and transaction failures.
+
+> **Orders require both ALGO and USDC**: ~0.957 ALGO locked per order (MBR) + USDC collateral for buys. "Overspend" errors mean insufficient ALGO or USDC.
+
+> **Market orders become positions, not open orders**: After fill, check `alpha_get_positions` — not `alpha_get_open_orders`.
+
+> **Multi-choice markets**: Trade using `options[].marketAppId`, not the parent market ID.
+
+> For detailed Alpha Arcade workflows (orderbook mechanics, collateral, amend/cancel, split/merge, claiming), load the `alpha-arcade-interaction` skill.
+
 ## Tool Categories
 
 **Wallet** (10): `wallet_add_account`, `wallet_remove_account`, `wallet_list_accounts`, `wallet_switch_account`, `wallet_get_info`, `wallet_get_assets`, `wallet_sign_transaction`, `wallet_sign_transaction_group`, `wallet_sign_data`, `wallet_optin_asset`
@@ -181,7 +205,26 @@ Haystack Router aggregates quotes across multiple Algorand DEXes (Tinyman, Pact,
 
 **Pera Asset Verification** (3): `api_pera_asset_verification_status`, `api_pera_verified_asset_details`, `api_pera_verified_asset_search`
 
+**Alpha Arcade** (15): Read: `alpha_get_live_markets`, `alpha_get_reward_markets`, `alpha_get_market`, `alpha_get_orderbook`, `alpha_get_open_orders`, `alpha_get_positions`. Trade: `alpha_create_limit_order`, `alpha_create_market_order`, `alpha_cancel_order`, `alpha_amend_order`, `alpha_propose_match`, `alpha_split_shares`, `alpha_merge_shares`, `alpha_claim`
+
+> For detailed Alpha Arcade workflows (orderbook mechanics, collateral, limit vs market orders), load the `alpha-arcade-interaction` skill.
+
 **ARC-26 URI** (1): `generate_algorand_qrcode`
+
+### QR Code Display
+
+When generating QR codes with `generate_algorand_qrcode`, always include both in your reply:
+
+1. **UTF-8 QR block** — Unicode block characters from the tool's text output. Paste inside a code block.
+2. **URI string** — always show this, users need it for wallet deep links.
+
+The tool's first content member is text containing the UTF-8 QR block plus URI string. Extract and paste directly:
+
+```
+[paste UTF-8 QR here]
+```
+
+URI: `algorand://...`
 
 **Knowledge Base** (1): `get_knowledge_doc`
 
@@ -234,3 +277,5 @@ When using NFD (`.algo` names), always use the `depositAccount` field from the N
 - [CAIP-2 Specification](https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md)
 - [Coinbase x402 Protocol](https://github.com/coinbase/x402)
 - [Haystack Router (TxnLab DEX Aggregator)](https://github.com/TxnLab/haystack-router)
+- Alpha Arcade: https://alphaarcade.com
+- Alpha Arcade API: https://platform.alphaarcade.com

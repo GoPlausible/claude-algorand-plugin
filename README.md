@@ -4,9 +4,9 @@ Algorand blockchain integration for [Claude Code](https://claude.ai/code) — by
 
 ## Features
 
-- **MCP Server**: Bundled `@goplausible/algorand-mcp` (101 tools) — wallet, transactions, smart contracts, TEAL, indexer, DEX, NFD, knowledge base
+- **MCP Server**: Bundled `@goplausible/algorand-mcp` (122 tools) — wallet, transactions, smart contracts, TEAL, indexer, DEX, NFD, Haystack Router, Alpha Arcade, knowledge base
 - **x402 Payment Protocol**: Claude autonomously pays for x402-protected HTTP resources using Algorand
-- **7 Skills**:
+- **10 Skills**:
   - `algorand-development` — AlgoKit CLI, project creation, general workflows
   - `algorand-typescript` — TypeScript smart contracts (Algorand TypeScript / PuyaTs)
   - `algorand-python` — Python smart contracts (Algorand Python / PuyaPy)
@@ -14,6 +14,9 @@ Algorand blockchain integration for [Claude Code](https://claude.ai/code) — by
   - `algorand-x402-typescript` — Build x402 payment servers/clients in TypeScript
   - `algorand-x402-python` — Build x402 payment servers/clients in Python
   - `algorand-x402-payment` — Runtime x402 payments (Claude as autonomous client)
+  - `haystack-router-interaction` — Best-price swaps via Haystack Router DEX aggregator
+  - `haystack-router-development` — Build swap UIs and Node.js automation with Haystack Router SDK
+  - `alpha-arcade-interaction` — Prediction markets on Algorand via Alpha Arcade
 - **Agent**: `algorand-agent` for complex multi-step Algorand tasks
 - **Multi-network**: `mainnet`, `testnet`, `localnet`
 - **Secure wallet**: Per-transaction and daily spending limits, private keys never exposed
@@ -94,15 +97,15 @@ Add to `~/.claude/settings.json`:
 }
 ```
 
-The pattern `mcp__algorand-mcp__*` matches all 101 tools from the Algorand MCP server.
+The pattern `mcp__algorand-mcp__*` matches all 122 tools from the Algorand MCP server.
 
 > **Note**: Plugins cannot ship their own permission allowlists — this is by design. Permissions are a trust decision made by the user, not the plugin author.
 
 ## Tool Loading (Important)
 
-This plugin provides 101 MCP tools. Claude Code automatically **defers** large tool sets to save context window space. This means Claude must use `ToolSearch` to load tools before calling them — the plugin handles this via SessionStart hooks and skill instructions.
+This plugin provides 122 MCP tools. Claude Code automatically **defers** large tool sets to save context window space. This means Claude must use `ToolSearch` to load tools before calling them — the plugin handles this via SessionStart hooks and skill instructions.
 
-If you prefer all 101 tools loaded directly into context (no ToolSearch needed), set this environment variable:
+If you prefer all 122 tools loaded directly into context (no ToolSearch needed), set this environment variable:
 
 ```bash
 ENABLE_TOOL_SEARCH=false claude --plugin-dir /path/to/claude-algorand-plugin
@@ -118,9 +121,9 @@ Or add to `~/.claude/settings.json`:
 }
 ```
 
-> **Trade-off**: Disabling tool search loads all 101 tool definitions into context at session start, using more context window space but ensuring tools are always immediately available.
+> **Trade-off**: Disabling tool search loads all 122 tool definitions into context at session start, using more context window space but ensuring tools are always immediately available.
 
-## MCP Tool Categories (101 tools)
+## MCP Tool Categories (122 tools)
 
 | Category | Count | Examples |
 |----------|-------|---------|
@@ -133,6 +136,9 @@ Or add to `~/.claude/settings.json`:
 | Indexer API | 17 | `api_indexer_search_for_transactions`, `api_indexer_lookup_asset_by_id` |
 | NFDomains | 6 | `api_nfd_get_nfd`, `api_nfd_search_nfds` |
 | Tinyman AMM | 9 | `api_tinyman_get_swap_quote`, `api_tinyman_get_pool` |
+| Haystack Router | 3 | `api_haystack_get_swap_quote`, `api_haystack_execute_swap` |
+| Pera Asset Verification | 3 | `api_pera_asset_verification_status`, `api_pera_verified_asset_search` |
+| Alpha Arcade | 15 | `alpha_get_live_markets`, `alpha_create_market_order`, `alpha_get_positions` |
 | ARC-26 URI | 1 | `generate_algorand_qrcode` |
 | Knowledge | 1 | `get_knowledge_doc` |
 
@@ -159,6 +165,9 @@ Test endpoint: `https://example.x402.goplausible.xyz/`
 | `algorand-x402-typescript` | x402 payments in TypeScript |
 | `algorand-x402-python` | x402 payments in Python |
 | `algorand-x402-payment` | Runtime x402 payments (Claude as autonomous client) |
+| `haystack-router-interaction` | Best-price swaps via Haystack Router DEX aggregator |
+| `haystack-router-development` | Build swap UIs and automation with Haystack Router SDK |
+| `alpha-arcade-interaction` | Prediction markets on Algorand via Alpha Arcade |
 
 ## Links
 
@@ -168,6 +177,8 @@ Test endpoint: `https://example.x402.goplausible.xyz/`
 - **Algorand x402**: https://x402.goplausible.xyz
 - **x402 Test Endpoints**: https://example.x402.goplausible.xyz/
 - **x402 Facilitator**: https://facilitator.goplausible.xyz
+- **Haystack Router**: https://github.com/TxnLab/haystack-router
+- **Alpha Arcade**: https://alphaarcade.com
 - **Testnet Faucet**: https://lora.algokit.io/testnet/fund
 
 ## License
