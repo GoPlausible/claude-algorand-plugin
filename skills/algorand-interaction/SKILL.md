@@ -213,18 +213,22 @@ Alpha Arcade provides on-chain prediction markets on Algorand. All collateral an
 
 ### QR Code Display
 
-When generating QR codes with `generate_algorand_qrcode`, always include both in your reply:
+When generating QR codes with `generate_algorand_qrcode`, the tool returns: `qr` (UTF-8 text QR code), `uri` (the `algorand://` URI), `link` (shareable hosted QR URL), `expires_in` (link validity period).
 
-1. **UTF-8 QR block** — Unicode block characters from the tool's text output. Paste inside a code block.
-2. **URI string** — always show this, users need it for wallet deep links.
+Always include all of the following in your reply:
 
-The tool's first content member is text containing the UTF-8 QR block plus URI string. Extract and paste directly:
+1. **UTF-8 QR block** — from the `qr` field. Paste inside a code block.
+2. **URI string** — from the `uri` field, for wallet deep links.
+3. **Shareable link** — from the `link` field, a hosted QR code URL the user can share.
+4. **Expiry** — from `expires_in`, tell user how long the hosted link is valid.
 
 ```
-[paste UTF-8 QR here]
+[paste UTF-8 QR from `qr` field here]
 ```
 
 URI: `algorand://...`
+Shareable QR: [link URL]
+Expires in: [expires_in]
 
 **Knowledge Base** (1): `get_knowledge_doc`
 

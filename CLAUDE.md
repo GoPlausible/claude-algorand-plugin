@@ -134,24 +134,27 @@ On HTTP 402 with `accepts[]`: parse requirements → map CAIP-2 → `wallet_get_
 
 ## QR Code Display (ARC-26 URI)
 
-When generating QR codes with `generate_algorand_qrcode`, the tool returns a UTF-8 text QR code and a URI string.
+When generating QR codes with `generate_algorand_qrcode`, the tool returns: `qr` (UTF-8 text QR code), `uri` (the `algorand://` URI), `link` (shareable hosted QR URL), `expires_in` (link validity period).
 
-**After calling the tool, extract and paste the QR code directly in your response.**
-**Always include both:**
+**After calling the tool, include all of the following in your response:**
 
-1. **UTF-8 QR block** — Unicode block characters from the tool's text output. Paste inside a code block.
-2. **URI string** — always show this, users need it for wallet deep links.
+1. **UTF-8 QR block** — Unicode block characters from the `qr` field. Paste inside a code block.
+2. **URI string** — from the `uri` field, show for wallet deep links.
+3. **Shareable link** — from the `link` field, a hosted QR code URL the user can share.
+4. **Expiry** — from `expires_in`, tell user how long the hosted link is valid.
 
 ### Steps to include QR code in reply:
 1. Call the tool and capture output
-2. Content's first array member is text — contains the UTF-8 QR block (Unicode block characters) plus URI string
+2. Extract `qr`, `uri`, `link`, and `expires_in` from the response
 3. Include in your reply:
 
 ```
-[paste UTF-8 QR here]
+[paste UTF-8 QR from `qr` field here]
 ```
 
 URI: `algorand://...`
+Shareable QR: [link URL]
+Expires in: [expires_in]
 
 ## Key Things to Remember
 
