@@ -211,24 +211,34 @@ Alpha Arcade provides on-chain prediction markets on Algorand. All collateral an
 
 **ARC-26 URI** (1): `generate_algorand_qrcode`
 
-### QR Code Display
+## QR Code Display (ARC-26 URI)
 
-When generating QR codes with `generate_algorand_qrcode`, the tool returns: `qr` (UTF-8 text QR code), `uri` (the `algorand://` URI), `link` (shareable hosted QR URL), `expires_in` (link validity period).
+`generate_algorand_qrcode` generates an Algorand payment URI and QR code per ARC-26 specification via QRClaw service.
 
-Always include all of the following in your reply:
+**Parameters:**
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `address` | Yes | Receiver Algorand address |
+| `label` | No | Payment label |
+| `amount` | No | Amount in microunits (e.g. 1000000 = 1 ALGO or 1 USDC) |
+| `asset` | No | ASA ID for asset transfers; omit or 0 for ALGO |
+| `note` | No | Payment note |
+| `xnote` | No | Exclusive immutable note |
 
-1. **UTF-8 QR block** — from the `qr` field. Paste inside a code block.
-2. **URI string** — from the `uri` field, for wallet deep links.
-3. **Shareable link** — from the `link` field, a hosted QR code URL the user can share.
-4. **Expiry** — from `expires_in`, tell user how long the hosted link is valid.
+**Returns:**
+- `qr` — UTF-8 text QR code (terminal-friendly)
+- `uri` — the `algorand://` URI string
+- `link` — shareable hosted QR URL (via QRClaw service)
+- `expires_in` — link validity period
 
-```
-[paste UTF-8 QR from `qr` field here]
-```
+After calling the tool, **extract and paste the QR code directly in your response**.
+**Always include all of these in your reply:**
 
-URI: `algorand://...`
-Shareable QR: [link URL]
-Expires in: [expires_in]
+1. **UTF-8 QR block** — Unicode block characters from `qr`. Paste inside a code block.
+2. **URI string** — always show this, users need it for wallet deep links.
+3. **Shareable link** — the hosted QR URL from `link`, so users can share or open it in a browser.
+
+
 
 **Knowledge Base** (1): `get_knowledge_doc`
 
