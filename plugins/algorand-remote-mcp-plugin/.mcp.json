@@ -1,0 +1,12 @@
+{
+    "mcpServers": {
+    "algorand-remote-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://algorandmcp.goplausible.xyz/sse"
+      ]
+    }
+  }
+}
