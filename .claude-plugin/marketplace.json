@@ -71,6 +71,18 @@
         "sse"
       ],
       "category": "blockchain"
+    },
+    {
+      "name": "qrclaw-plugin",
+      "description": "QR Claw Plugin and skills — by GoPlausible",
+      "source": "./plugins/qrclaw-plugin/",
+      "homepage": "https://qrclaw.goplausible.xyz/",
+      "repository": "https://github.com/GoPlausible/qrclaw",
+      "license": "MIT",
+      "keywords": [
+        "qrcode", "uri", "claude", "plugin", "skills", "goplausible"
+      ],
+      "category": "tools"
     }
   ]
 }

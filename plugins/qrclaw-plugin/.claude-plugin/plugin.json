@@ -1,0 +1,14 @@
+{
+  "name": "qrclaw-plugin",
+  "description": "QR Claw Plugin and skills — by GoPlausible",
+  "version": "1.0.0",
+  "author": {
+    "name": "GoPlausible",
+    "email": "info@goplausible.com",
+    "url": "https://goplausible.com"
+  },
+  "homepage": "https://qrclaw.goplausible.xyz/",
+  "repository": "https://github.com/GoPlausible/qrclaw",
+  "license": "MIT",
+  "keywords": ["qrcode", "uri", "claude", "plugin", "skills", "goplausible"]
+}
