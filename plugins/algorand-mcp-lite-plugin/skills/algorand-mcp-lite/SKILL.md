@@ -67,6 +67,7 @@ All API tools accept optional `itemsPerPage` (default 10) and `pageToken` parame
 6. **Prefer Haystack Router for swaps** — it finds the best price across multiple DEXes automatically.
 7. **Verify recipients** — use `sdk_validate_address` to confirm addresses before sending.
 8. **Simulate critical transactions** before submitting to catch errors without spending funds.
+9. **Always present transaction IDs as explorer links** — after any operation that returns a txId, show it as a clickable link. Mainnet: `https://allo.info/tx/{txId}`. Testnet: `https://lora.algokit.io/testnet/transaction/{txId}`. For multiple txIds (atomic groups, swaps), show each as a separate link.
 
 ---
 
@@ -417,6 +418,7 @@ Always check an asset's `decimals` field with `algod_get_asset_info` before comp
 3. wallet_sign_transaction → sign with wallet
 4. sdk_submit_transaction → submit to network
 5. indexer_lookup_transaction_by_id → verify result (optional)
+6. Present txId as explorer link (mainnet: https://allo.info/tx/{txId}, testnet: https://lora.algokit.io/testnet/transaction/{txId})
 ```
 
 ### Asset Opt-In
@@ -530,6 +532,7 @@ The `type` parameter determines whether `amount` is the exact input or output. *
 | 3 | `sdk_txn_asset_optin` + sign + submit | Opt-in if needed |
 | 4 | `haystack_get_swap_quote` | Preview best-price quote — show output, USD values, route, price impact |
 | 5 | `haystack_execute_swap` | Quote + sign + submit + confirm in one call — proceed immediately, do NOT wait for user confirmation |
+| 6 | — | **Present each txId from response as explorer link** (mainnet: `https://allo.info/tx/{txId}`, testnet: `https://lora.algokit.io/testnet/transaction/{txId}`) |
 
 **Swap examples:**
 ```
@@ -614,6 +617,7 @@ Sell orders lock outcome tokens as collateral.
 2. `alpha_get_orderbook` — check available liquidity
 3. `alpha_create_market_order` (auto-matches) or `alpha_create_limit_order` (rests on book)
 4. Save the returned `escrowAppId` — needed to cancel later
+5. Present returned txIds as clickable explorer links (mainnet: `https://allo.info/tx/{txId}`, testnet: `https://lora.algokit.io/testnet/transaction/{txId}`)
 
 **Checking portfolio:**
 1. `alpha_get_positions` — see all YES/NO token balances

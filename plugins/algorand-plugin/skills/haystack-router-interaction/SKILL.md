@@ -87,6 +87,12 @@ Step 3: Preview quote (recommended — show user before executing)
 Step 4: User confirms → Execute
   → api_haystack_execute_swap { fromASAID, toASAID, amount, slippage, network }
   → Returns confirmed result with summary
+
+Step 5: Present transaction links
+  → Extract txIds array from api_haystack_execute_swap response
+  → Present each txId as a clickable explorer link:
+    Mainnet: https://allo.info/tx/{txId}
+    Testnet: https://lora.algokit.io/testnet/transaction/{txId}
 ```
 
 **Key rules:**
@@ -95,6 +101,7 @@ Step 4: User confirms → Execute
 - The execute tool handles signing via the active wallet — no manual signing needed
 - Default to testnet during development; confirm before mainnet
 - Quotes are time-sensitive — execute promptly after user confirms
+- After execution, **always present each txId** from the response as a clickable explorer link (mainnet: `https://allo.info/tx/{txId}`, testnet: `https://lora.algokit.io/testnet/transaction/{txId}`)
 
 ## CRITICAL: Swap Direction Rules
 

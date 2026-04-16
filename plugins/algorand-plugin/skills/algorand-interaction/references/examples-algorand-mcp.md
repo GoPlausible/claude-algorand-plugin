@@ -87,6 +87,11 @@ api_indexer_lookup_transaction_by_id {
 }
 ```
 
+### Step 6: Present transaction link to user
+Show the txId from Step 4 as a clickable explorer link:
+- Testnet: `https://lora.algokit.io/testnet/transaction/[txID]`
+- Mainnet: `https://allo.info/tx/[txID]`
+
 ---
 
 ## Asset Opt-In Workflow (One-Step)
@@ -101,6 +106,10 @@ wallet_optin_asset {
 ```
 
 This creates, signs, and submits the opt-in transaction in a single call.
+
+Present the returned txId as a clickable explorer link:
+- Testnet: `https://lora.algokit.io/testnet/transaction/[txID]`
+- Mainnet: `https://allo.info/tx/[txID]`
 
 ---
 
@@ -141,6 +150,9 @@ send_raw_transaction {
   "network": "testnet"
 }
 ```
+
+### Step 5: Present transaction link to user
+Show the txId as a clickable explorer link (testnet: `https://lora.algokit.io/testnet/transaction/[txID]`, mainnet: `https://allo.info/tx/[txID]`).
 
 ---
 
@@ -204,6 +216,9 @@ send_raw_transaction {
 }
 ```
 
+### Step 8: Present transaction link to user
+Show the txId as a clickable explorer link (testnet: `https://lora.algokit.io/testnet/transaction/[txID]`, mainnet: `https://allo.info/tx/[txID]`).
+
 ---
 
 ## Atomic Group Transaction Workflow
@@ -252,6 +267,9 @@ send_raw_transaction {
 
 > Atomic groups are all-or-nothing: either all transactions succeed or none do.
 
+### Step 5: Present transaction links to user
+Show each txId from the group as a clickable explorer link (testnet: `https://lora.algokit.io/testnet/transaction/[txID]`, mainnet: `https://allo.info/tx/[txID]`).
+
 ---
 
 ## Create an ASA (Algorand Standard Asset)
@@ -298,6 +316,8 @@ api_algod_get_pending_transaction {
 }
 ```
 > The `asset-index` field in the response contains the new ASA ID.
+
+Present the txId and new ASA ID to the user. Show the txId as a clickable explorer link (testnet: `https://lora.algokit.io/testnet/transaction/[txID]`, mainnet: `https://allo.info/tx/[txID]`).
 
 ---
 
@@ -346,6 +366,9 @@ send_raw_transaction {
   "network": "testnet"
 }
 ```
+
+### Step 5: Present transaction link to user
+Show the txId as a clickable explorer link (testnet: `https://lora.algokit.io/testnet/transaction/[txID]`, mainnet: `https://allo.info/tx/[txID]`).
 
 ---
 
@@ -461,6 +484,8 @@ api_haystack_execute_swap {
 ```
 > User receives exactly 1 USDC. Input ALGO varies based on market price.
 
+After execution, present each txId from the response as a clickable explorer link (testnet: `https://lora.algokit.io/testnet/transaction/[txID]`, mainnet: `https://allo.info/tx/[txID]`).
+
 ### Recommended workflow with preview (4 steps)
 
 #### Step 1: Check wallet
@@ -506,6 +531,11 @@ api_haystack_execute_swap {
   "network": "testnet"
 }
 ```
+
+#### Step 5: Present transaction links to user
+`api_haystack_execute_swap` returns `txIds` (an array). Show each txId as a clickable explorer link:
+- Testnet: `https://lora.algokit.io/testnet/transaction/[txID]`
+- Mainnet: `https://allo.info/tx/[txID]`
 
 ### Slippage guidance
 
@@ -639,6 +669,9 @@ send_raw_transaction {
   "network": "testnet"
 }
 ```
+
+### Step 4: Present transaction link to user
+Show the txId as a clickable explorer link (testnet: `https://lora.algokit.io/testnet/transaction/[txID]`, mainnet: `https://allo.info/tx/[txID]`).
 
 ---
 

@@ -65,6 +65,7 @@ API responses are paginated. All API tools accept optional `itemsPerPage` (defau
 10. **Prefer Haystack Router for swaps** — it finds the best price across multiple DEXes automatically; use Tinyman directly only when you need pool analytics, liquidity management, or pool creation
 11. **Respect wallet spending limits** — if a transaction is rejected due to limits, inform the user rather than bypassing
 12. **Verify recipients** — use `validate_address` to confirm addresses before sending, and always confirm with the user
+13. **Always present transaction IDs as explorer links** — after any operation that returns a txId, show it as a clickable link. Mainnet: `https://allo.info/tx/{txId}`. Testnet: `https://lora.algokit.io/testnet/transaction/{txId}`. For multiple txIds (atomic groups, swaps), show each separately.
 
 ## Core Capabilities
 
@@ -295,6 +296,7 @@ Before ANY transaction, validate these requirements:
 3. wallet_sign_transaction -> sign with wallet
 4. send_raw_transaction -> submit to network
 5. api_indexer_lookup_transaction_by_id -> verify result (optional)
+6. Present txId as explorer link (mainnet: https://allo.info/tx/{txId}, testnet: https://lora.algokit.io/testnet/transaction/{txId})
 ```
 
 ### Asset Opt-In (Quick)
@@ -426,6 +428,7 @@ Haystack Router aggregates quotes across multiple Algorand DEXes (Tinyman, Pact,
 | 4 | `api_haystack_get_swap_quote` | Preview best-price quote — show user output, USD values, route, price impact |
 | 5 | User confirms | Always confirm before executing — quotes are time-sensitive |
 | 6 | `api_haystack_execute_swap` | All-in-one: quote + sign via wallet + submit + confirm |
+| 7 | — | **Present each txId from response as explorer link** (mainnet: `https://allo.info/tx/{txId}`, testnet: `https://lora.algokit.io/testnet/transaction/{txId}`) |
 
 **`api_haystack_get_swap_quote` parameters:**
 ```
@@ -728,6 +731,7 @@ Sell orders lock outcome tokens as collateral.
 2. `alpha_get_orderbook` — check available liquidity
 3. `alpha_create_market_order` (auto-matches) or `alpha_create_limit_order` (rests on book)
 4. Save the returned `escrowAppId` — you need it to cancel
+5. Present returned txIds as clickable explorer links (mainnet: `https://allo.info/tx/{txId}`, testnet: `https://lora.algokit.io/testnet/transaction/{txId}`)
 
 #### Checking your portfolio
 1. `alpha_get_positions` — see all YES/NO token balances

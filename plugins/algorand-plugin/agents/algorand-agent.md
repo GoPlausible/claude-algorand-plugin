@@ -161,6 +161,7 @@ Always check the asset's `decimals` field with `api_algod_get_asset_by_id` befor
 | 4 | `wallet_sign_transaction` | Sign with active wallet account (enforces limits) |
 | 5 | `send_raw_transaction` | Submit signed transaction to network |
 | 6 | Query tools | Verify result on-chain |
+| 7 | — | **Present txId as explorer link** (mainnet: `https://allo.info/tx/{txId}`, testnet: `https://lora.algokit.io/testnet/transaction/{txId}`) |
 
 #### One-Step Asset Opt-In
 
@@ -178,6 +179,7 @@ When the user provides their own secret key (not using the wallet):
 | 1 | `make_*_txn` | Build the transaction |
 | 2 | `sign_transaction` | Sign with provided secret key hex |
 | 3 | `send_raw_transaction` | Submit signed transaction |
+| 4 | — | **Present txId as explorer link** (mainnet: `https://allo.info/tx/{txId}`, testnet: `https://lora.algokit.io/testnet/transaction/{txId}`) |
 
 ### Atomic Group Transaction Workflow
 
@@ -189,6 +191,7 @@ For atomic (all-or-nothing) multi-transaction groups:
 | 2 | `assign_group_id` | Assign group ID to all transactions |
 | 3 | `wallet_sign_transaction_group` | Sign all transactions in group with wallet |
 | 4 | `send_raw_transaction` | Submit all signed transactions |
+| 5 | — | **Present each txId as explorer link** (mainnet: `https://allo.info/tx/{txId}`, testnet: `https://lora.algokit.io/testnet/transaction/{txId}`) |
 
 ### Tool Categories
 

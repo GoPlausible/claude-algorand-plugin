@@ -23,6 +23,10 @@ Returns:
   summary: { inputAmount, outputAmount, totalFees, transactionCount }
 ```
 
+**After execution, always present the `txIds` to the user as clickable explorer links:**
+- Mainnet: `https://allo.info/tx/{txId}` for each txId
+- Testnet: `https://lora.algokit.io/testnet/transaction/{txId}` for each txId
+
 ## Complete Workflow (with preview)
 
 For best UX, preview the quote before executing:
@@ -50,6 +54,12 @@ For best UX, preview the quote before executing:
        slippage: 1, network: "mainnet"
      }
    → Returns confirmed result with exact summary
+
+5. Present transaction links
+   → Extract txIds from response
+   → Show each as clickable link:
+     Mainnet: https://allo.info/tx/{txId}
+     Testnet: https://lora.algokit.io/testnet/transaction/{txId}
 ```
 
 ## CRITICAL: Swap Direction (`type` parameter)

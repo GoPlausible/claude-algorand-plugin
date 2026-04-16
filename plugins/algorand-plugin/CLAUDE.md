@@ -156,6 +156,22 @@ URI: `algorand://...`
 Shareable QR: [link URL]
 Expires in: [expires_in]
 
+## Post-Transaction Display — Explorer Links
+
+After ANY blockchain operation that produces a transaction ID (txId), **always present the txId to the user as a clickable explorer link**. Choose the URL based on the active network:
+
+- **Mainnet**: `https://allo.info/tx/{txId}`
+- **Testnet**: `https://lora.algokit.io/testnet/transaction/{txId}`
+
+Format in your response:
+```
+Transaction confirmed: [TXID](https://allo.info/tx/TXID)
+```
+
+For operations returning multiple transaction IDs (atomic groups, swaps), show **each** txId as a separate clickable link. For `localnet`, show the raw txId without a link (no public explorer).
+
+This applies to results from: `send_raw_transaction`, `wallet_optin_asset`, `api_haystack_execute_swap`, `alpha_create_market_order`, `alpha_create_limit_order`, and any other tool that returns a txId or txIds array.
+
 ## Key Things to Remember
 
 - Always check wallet with `wallet_get_info` before blockchain operations

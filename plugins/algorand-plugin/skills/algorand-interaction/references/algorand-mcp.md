@@ -402,6 +402,10 @@ TEAL compilation, transaction simulation, and submission.
   "network": "testnet"
 }
 ```
+- **Returns**: `{ txId }` — the transaction ID of the submitted transaction
+- **Post-submission**: Always present the txId to the user as a clickable explorer link:
+  - Mainnet: `https://allo.info/tx/{txId}`
+  - Testnet: `https://lora.algokit.io/testnet/transaction/{txId}`
 
 ### simulate_raw_transactions
 - **Purpose**: Simulate raw transactions without submitting

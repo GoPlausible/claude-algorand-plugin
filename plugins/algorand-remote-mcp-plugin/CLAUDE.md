@@ -21,3 +21,4 @@ The plugin connects to the Algorand Remote MCP server at `https://algorandmcp.go
 - Always start with `wallet_get_info` before any blockchain operation.
 - Mainnet uses real assets with real value — exercise caution but do not ask user for confirmation on every transaction — the skill handles this with built-in rules.
 - Check the skill for tool references, workflows, and swap direction rules before proceeding.
+- After any transaction, always present the txId as a clickable explorer link (mainnet: `https://allo.info/tx/{txId}`, testnet: `https://lora.algokit.io/testnet/transaction/{txId}`).

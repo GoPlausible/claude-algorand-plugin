@@ -159,6 +159,11 @@ Step 4: Place order
   (rests on book)
 
 Step 5: Save the returned escrowAppId — needed to cancel or amend
+
+Step 6: Present transaction link
+  → Show any returned txIds as clickable explorer links:
+    Mainnet: https://allo.info/tx/{txId}
+    Testnet: https://lora.algokit.io/testnet/transaction/{txId}
 ```
 
 ### Checking your portfolio
@@ -209,6 +214,8 @@ Step 2: Place limit orders on both sides for market making
 Step 3: Merge matched tokens back to USDC
   → alpha_merge_shares { marketAppId, quantity, network }
 ```
+
+> **Post-transaction display**: After any Alpha Arcade trading operation that returns transaction IDs (`alpha_create_market_order`, `alpha_create_limit_order`, `alpha_cancel_order`, `alpha_split_shares`, `alpha_merge_shares`, `alpha_claim`), always present the txIds as clickable explorer links. Mainnet: `https://allo.info/tx/{txId}`. Testnet: `https://lora.algokit.io/testnet/transaction/{txId}`.
 
 ## Common Pitfalls
 

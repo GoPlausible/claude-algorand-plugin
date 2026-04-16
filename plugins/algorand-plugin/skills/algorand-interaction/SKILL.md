@@ -106,6 +106,9 @@ Always check asset's `decimals` field with `api_algod_get_asset_by_id` before co
 | 4 | `wallet_sign_transaction` | Sign with active wallet account (enforces limits) |
 | 5 | `send_raw_transaction` | Submit signed transaction to network |
 | 6 | Query tools | Verify result on-chain |
+| 7 | — | **Present txId as explorer link** (mainnet: `https://allo.info/tx/{txId}`, testnet: `https://lora.algokit.io/testnet/transaction/{txId}`) |
+
+> **Post-transaction display**: After `send_raw_transaction` (or any tool that returns a txId), always present the transaction ID to the user as a clickable explorer link. Mainnet: `https://allo.info/tx/{txId}`. Testnet: `https://lora.algokit.io/testnet/transaction/{txId}`. For multiple txIds (atomic groups, swaps), show each as a separate link.
 
 ### One-Step Asset Opt-In
 
@@ -123,6 +126,7 @@ When the user provides their own secret key (not using the wallet):
 | 1 | `make_*_txn` | Build the transaction |
 | 2 | `sign_transaction` | Sign with provided secret key hex |
 | 3 | `send_raw_transaction` | Submit signed transaction |
+| 4 | — | **Present txId as explorer link** (see Post-transaction display note above) |
 
 ## Atomic Group Transaction Workflow
 
@@ -134,6 +138,7 @@ For atomic (all-or-nothing) multi-transaction groups:
 | 2 | `assign_group_id` | Assign group ID to all transactions |
 | 3 | `wallet_sign_transaction_group` | Sign all transactions in group with wallet |
 | 4 | `send_raw_transaction` | Submit all signed transactions |
+| 5 | — | **Present each txId as explorer link** (see Post-transaction display note above) |
 
 ## Best-Price Swap via Haystack Router (DEX Aggregator)
 
@@ -147,6 +152,7 @@ Haystack Router aggregates quotes across multiple Algorand DEXes (Tinyman, Pact,
 | 4 | `api_haystack_get_swap_quote` | Preview best-price quote — show user output, USD values, route, price impact |
 | 5 | User confirms | Always confirm before executing |
 | 6 | `api_haystack_execute_swap` | All-in-one: quote + sign via wallet + submit + confirm |
+| 7 | — | **Present each txId from response as explorer link** (mainnet: `https://allo.info/tx/{txId}`, testnet: `https://lora.algokit.io/testnet/transaction/{txId}`) |
 
 > **CRITICAL — Swap direction (`type` parameter):**
 > - **"Buy 10 ALGO"** → user wants exactly 10 ALGO **out** → `type: "fixed-output"`, `amount` = 10000000
@@ -170,6 +176,8 @@ Alpha Arcade provides on-chain prediction markets on Algorand. All collateral an
 | 4alt | `alpha_create_limit_order` | Place at specific price (rests on orderbook until matched) |
 | 5 | `alpha_get_positions` | Check token balances (filled orders) |
 | 5alt | `alpha_get_open_orders` | Check unfilled limit orders |
+
+> **Post-trade display**: After `alpha_create_market_order` or `alpha_create_limit_order`, present any returned txIds as clickable explorer links. Mainnet: `https://allo.info/tx/{txId}`. Testnet: `https://lora.algokit.io/testnet/transaction/{txId}`.
 
 > **CRITICAL — Prices are microunits, NOT percentages**: `yesProb`/`noProb` range 0–1,000,000. $0.50 = 500,000. Dividing by 100 instead of 1,000,000 causes uint64 overflow and transaction failures.
 
