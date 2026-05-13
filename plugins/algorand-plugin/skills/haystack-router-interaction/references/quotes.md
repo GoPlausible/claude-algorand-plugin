@@ -34,7 +34,7 @@ Response includes:
 | `address`      | `string` | No       | User address (for opt-in detection)             |
 | `maxGroupSize` | `number` | No       | Max transactions in group (default: 16)         |
 | `maxDepth`     | `number` | No       | Max routing hops (default: 4)                   |
-| `network`      | `string` | No       | `"mainnet"` (default) or `"testnet"`            |
+| `network`      | `string` | No       | `"testnet"` (default) or `"mainnet"`            |
 
 ## Quote Types — CRITICAL: Choosing the Right Direction
 

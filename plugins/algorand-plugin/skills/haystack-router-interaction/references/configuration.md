@@ -4,8 +4,8 @@
 
 All Algorand MCP Haystack Router tools accept a `network` parameter:
 
-- `"mainnet"` — MainNet (default)
-- `"testnet"` — TestNet
+- `"testnet"` — TestNet (default)
+- `"mainnet"` — MainNet
 
 ```
 → api_haystack_get_swap_quote {

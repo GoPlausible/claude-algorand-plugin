@@ -228,7 +228,7 @@ Step 3: Merge matched tokens back to USDC
 - **Save escrowAppId**: It's the only way to cancel or amend your order later.
 - **USDC opt-in**: The wallet must be opted into USDC (ASA 31566704) before trading.
 - **Wallet required for trading**: Read-only tools work without a wallet, but trading tools require an active wallet account. Check via `wallet_get_info` and if no wallet exists, add one using `wallet_add_account`.
-- **Mainnet by default**: The server defaults to mainnet. Real money is at stake. Pass `network: "testnet"` for testing.
+- **Testnet by default — confirm before mainnet**: The MCP server now defaults to `testnet`. Always pass `network: "mainnet"` explicitly when the user wants to trade with real funds, and confirm with them first — real money is at stake on mainnet.
 
 ## Links
 

@@ -82,7 +82,7 @@ Skills are auto-discovered — Claude invokes them based on task context or via 
 
 ## Tool Parameters
 
-- **`network`**: Every blockchain tool accepts `"mainnet"` (default), `"testnet"`, or `"localnet"`. Always confirm with user before mainnet.
+- **`network`**: Every blockchain tool accepts `"testnet"` (default), `"mainnet"`, or `"localnet"`. Always confirm with user before mainnet.
 - **Pagination**: API tools accept `itemsPerPage` (default 10) and `pageToken` (from previous response) for paging through results.
 
 ## Signing
