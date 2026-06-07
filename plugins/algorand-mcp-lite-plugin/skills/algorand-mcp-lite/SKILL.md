@@ -47,7 +47,6 @@ Algorand Remote MCP Lite uses the MCP Apps SDK (`@modelcontextprotocol/ext-apps`
 6. **Signing**: Server-side signing via HashiCorp Vault — never request private keys or mnemonics unless the user explicitly asks.
 7. **Wallet Role UUID**: Retrieved only via `wallet_get_role` — this is sensitive information. Always warn users to protect it and never share it.
 8. **Asset Verification**: Check `pera_verified_asset_query` before interacting with unknown assets. Warn about suspicious/unverified tiers.
-9. **Spending Limits**: If a transaction is rejected due to wallet limits, inform the user rather than bypassing.
 
 ---
 
@@ -383,7 +382,6 @@ Before ANY transaction, validate these requirements:
 | `Asset hasn't been opted in` | Missing opt-in | Opt in to asset first |
 | `Overspend` | Fee + amount > balance | **STOP** — check balance, inform user (see below) |
 | `Insufficient balance` | Not enough ALGO or ASA | **STOP** — check balance, inform user (see below) |
-| `Spending limit exceeded` | Transaction exceeds wallet allowance | Inform user, adjust spending limits |
 | `No active agent wallet configured` | Missing wallet | Inform user, retry wallet check |
 
 > **CRITICAL — Overspend / Insufficient Balance**: If a transaction or swap fails due to overspending, insufficient balance, or negative balance errors, **DO NOT continue or retry**. Immediately call `wallet_get_info` to check the current balance, then inform the user of the shortfall (required amount vs. available balance including MBR and fees). Do not attempt alternative amounts or re-submit — wait for the user to fund the account or confirm next steps.

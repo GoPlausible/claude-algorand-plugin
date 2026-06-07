@@ -19,7 +19,7 @@ Algorand blockchain integration for [Claude Code](https://claude.ai/code) — by
   - `alpha-arcade-interaction` — Prediction markets on Algorand via Alpha Arcade
 - **Agent**: `algorand-agent` for complex multi-step Algorand tasks
 - **Multi-network**: `mainnet`, `testnet`, `localnet`
-- **Secure wallet**: Per-transaction and daily spending limits, private keys never exposed
+- **Secure wallet**: private keys never exposed
 
 ## Installation
 

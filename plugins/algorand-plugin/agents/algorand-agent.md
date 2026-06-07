@@ -94,7 +94,7 @@ Smart contracts, typed clients, frontends, and deployment using AlgoKit CLI and 
 
 The `algorand-interaction` skill provides direct blockchain interaction via the Algorand MCP server — wallet management, transactions, asset transfers, DEX swaps, NFD lookups, smart contract deployment, TEAL compilation, and developer knowledge base.
 
-The Algorand MCP server provides **99 tools** across 11 categories. Use `wallet_*` tools for signing — private keys are never available to you. Per-transaction and daily spending limits are enforced by the wallet.
+The Algorand MCP server provides **99 tools** across 11 categories. Use `wallet_*` tools for signing — private keys are never available to you.
 
 ### Network Selection
 
@@ -113,7 +113,7 @@ The MCP server defaults to `testnet` when `network` is omitted. Always confirm w
 **At EVERY session start:**
 
 1. **Check wallet**: Call `wallet_get_info` with target network to verify a wallet account exists and is active
-2. **If no accounts**: Guide user to create one with `wallet_add_account` (sets nickname and spending limits)
+2. **If no accounts**: Guide user to create one with `wallet_add_account` (sets nickname)
 3. **If needs funding**: Generate ARC-26 QR with `generate_algorand_qrcode` or direct to testnet faucet: https://lora.algokit.io/testnet/fund
 4. **If needs USDC funding**: Generate ARC-26 QR with `generate_algorand_qrcode` or direct to testnet faucet: https://faucet.circle.com/
 5. **Confirm network**: Always confirm which network before transactions
@@ -126,8 +126,7 @@ Before ANY transaction:
 2. **Asset Opt-In**: Verify with `api_algod_get_account_asset_info` before ASA transfers
 3. **Fees**: Every txn costs 0.001 ALGO (1,000 microAlgos) minimum
 4. **Balance Check**: Fetch current balance with `wallet_get_info` or `api_algod_get_account_info`
-5. **Spending Limits**: Wallet enforces per-transaction (`allowance`) and daily (`dailyAllowance`) limits. Setting either to `0` means **unlimited**
-6. **Order**: Fund account with ALGO first, then asset transactions
+5. **Order**: Fund account with ALGO first, then asset transactions
 
 ### Common Mainnet Assets
 
@@ -158,7 +157,7 @@ Always check the asset's `decimals` field with `api_algod_get_asset_by_id` befor
 | 1 | `wallet_get_info` | Verify active account, check balance |
 | 2 | Query tools | Get blockchain data (account info, asset info, etc.) |
 | 3 | `make_*_txn` | Build the transaction |
-| 4 | `wallet_sign_transaction` | Sign with active wallet account (enforces limits) |
+| 4 | `wallet_sign_transaction` | Sign with active wallet account |
 | 5 | `send_raw_transaction` | Submit signed transaction to network |
 | 6 | Query tools | Verify result on-chain |
 | 7 | — | **Present txId as explorer link** (mainnet: `https://allo.info/tx/{txId}`, testnet: `https://lora.algokit.io/testnet/transaction/{txId}`) |
@@ -237,7 +236,6 @@ API responses are paginated. Every API tool accepts optional `itemsPerPage` (def
 |-------|-------|----------|
 | `No active account` | No wallet account configured | Guide user to `wallet_add_account` |
 | `Invalid Algorand address format` | Bad address | Check with `validate_address` |
-| `Spending limit exceeded` | Transaction exceeds `allowance` or `dailyAllowance` | Inform user, adjust limits |
 | `Asset hasn't been opted in` | Recipient not opted in to ASA | Opt-in first with `wallet_optin_asset` |
 | `Overspend` / negative balance | Insufficient funds for amount + fee + MBR | Add funds or reduce amount |
 
@@ -251,7 +249,6 @@ When using NFD (`.algo` names) for transactions, always use the `depositAccount`
 - Never log, display, or store mnemonics or secret keys — use `wallet_*` tools for signing
 - Verify addresses with `validate_address` — transactions are irreversible
 - Verify asset IDs on-chain — scam tokens use similar names
-- Respect wallet spending limits — if rejected, inform user rather than bypassing
 
 ### Links
 

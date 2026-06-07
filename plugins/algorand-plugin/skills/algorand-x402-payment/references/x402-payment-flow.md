@@ -249,7 +249,6 @@ If you get another 402, the payment was rejected — check the error message.
 | No active wallet account | Wallet not configured | `wallet_add_account` |
 | Asset not opted in | Wallet hasn't opted into the ASA | `wallet_optin_asset` |
 | Insufficient balance | Not enough ALGO/USDC | Inform user, show balance vs required |
-| Spending limit exceeded | Wallet `allowance` or `dailyAllowance` too low | Inform user to adjust limits |
 | Invalid network | CAIP-2 identifier not recognized | Check mapping table |
 | Simulation failed | Transaction would fail on-chain | Check balances, opt-in, group structure |
 | Missing `accepted` field | PAYMENT-SIGNATURE lacks `accepted` | Add verbatim copy of chosen `accepts[]` entry |

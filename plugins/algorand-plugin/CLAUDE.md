@@ -87,7 +87,7 @@ Skills are auto-discovered — Claude invokes them based on task context or via 
 
 ## Signing
 
-- **`wallet_sign_transaction`** — Signs using the secure OS keychain wallet. Enforces spending limits. **Preferred for all user transactions.**
+- **`wallet_sign_transaction`** — Signs using the secure OS keychain wallet.
 - **`sign_transaction`** — Signs with a raw secret key hex. Only use when the user explicitly provides their own key.
 - **`wallet_sign_transaction_group`** — Signs atomic groups (all-or-nothing) via wallet.
 
