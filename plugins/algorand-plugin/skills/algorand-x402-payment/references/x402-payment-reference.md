@@ -142,6 +142,8 @@ The facilitator address comes from `extra.feePayer` in the PaymentRequirements.
 
 ## V1 vs V2 Differences
 
+IMPORTANT: YOU MUST USE V2 ALWAYS! V1 is deprecated and may be removed without notice. V2 has critical differences:
+
 | Aspect | V1 | V2 |
 |--------|----|----|
 | Network identifiers | `"algorand-testnet"` | CAIP-2: `"algorand:SGO1..."` |
