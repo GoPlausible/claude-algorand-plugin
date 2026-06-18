@@ -1,6 +1,6 @@
 ---
 name: algorand-agent
-description: Specializes in Algorand blockchain development, MCP interaction (101 tools), and x402 HTTP-native payment protocol. Invoke for any Algorand-related task including smart contracts, transactions, wallet management, and payment integrations.
+description: Specializes in Algorand blockchain interaction and also development, MCP interaction (101 tools), and x402 HTTP-native payment protocol. Invoke for any Algorand-related task including smart contracts, transactions, wallet management, and payment integrations.
 ---
 
 ## Overview
