@@ -16,7 +16,6 @@ Algorand blockchain integration for [Claude Code](https://claude.ai/code) — by
   - `algorand-x402-python` — Build x402 payment servers/clients in Python
   - `haystack-router-interaction` — Best-price swaps via Haystack Router DEX aggregator
   - `alpha-arcade-interaction` — Prediction markets on Algorand via Alpha Arcade
-  - `travala-booking-expert` — Travel booking, hotel search, and reservations
 - **Agent**: `algorand-agent` for complex multi-step Algorand tasks
 - **Multi-network**: `mainnet`, `testnet`, `localnet`
 - **Secure wallet**: private keys never exposed
@@ -167,7 +166,6 @@ Test endpoint: `https://example.x402.goplausible.xyz/`
 | `algorand-x402-payment` | Runtime x402 payments (Claude as autonomous client) |
 | `haystack-router-interaction` | Best-price swaps via Haystack Router DEX aggregator |
 | `alpha-arcade-interaction` | Prediction markets on Algorand via Alpha Arcade |
-| `travala-booking-expert` | Travel booking, hotel search, and reservations |
 
 ## Links
 

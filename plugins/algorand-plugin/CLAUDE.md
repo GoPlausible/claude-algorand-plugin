@@ -53,7 +53,7 @@ These rules override normal behavior. When triggered, act immediately without as
 | x402 | Runtime x402 payment (Claude as client) | `algorand-x402-payment` |
 | Haystack | Best-price swaps via MCP tools (agent interaction) | `haystack-router-interaction` |
 | Alpha Arcade | Prediction markets via MCP tools | `alpha-arcade-interaction` |
-| Travala Booking Expert | Travel booking, hotel search, and reservations | `travala-booking-expert` |s
+
 
 Skills are auto-discovered — Claude invokes them based on task context or via `/skill-name`. Agent `algorand-agent` can be invoked for complex multi-step Algorand tasks.
 

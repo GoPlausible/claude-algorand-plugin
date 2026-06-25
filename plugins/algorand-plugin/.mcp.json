@@ -8,13 +8,6 @@
       "args": [
         "@goplausible/algorand-mcp@latest"
       ]
-    },
-    "travala-mcp": {
-      "id": "travala-mcp",
-      "name": "Travala Travel MCP",
-      "description": "Remote Travala travel booking MCP (search, book, pay, confirm)",
-      "type": "http",
-      "url": "https://travel-mcp.travala.com/mcp"
     }
   }
 }
