@@ -159,7 +159,6 @@ Haystack Router aggregates quotes across multiple Algorand DEXes (Tinyman, Pact,
 > - Rule: **"buy X of Y" = fixed-output**. **"sell/swap/use X of Y" = fixed-input**. If ambiguous, ask.
 
 > For detailed Haystack Router workflows (batch swaps, configuration, slippage guidance), load the `haystack-router-interaction` skill.
-> For building swap UIs or integrating the `@txnlab/haystack-router` SDK, load the `haystack-router-development` skill.
 
 ## Alpha Arcade Prediction Markets
 

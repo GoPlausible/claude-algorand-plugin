@@ -7,8 +7,6 @@ description: "Route and execute optimal token swaps on Algorand using Haystack R
 
 This skill is for **interacting** with Haystack Router through Algorand MCP tools — getting quotes, executing swaps, and checking opt-in status. All operations use the Algorand MCP wallet for signing; no SDK installation or API keys needed.
 
-> **Building an application** that integrates Haystack Router directly? Use the **haystack-router-development** skill instead — it covers the `@txnlab/haystack-router` SDK, React integration, Node.js automation, middleware, and the full API surface.
-
 Haystack Router is a DEX aggregator and smart order routing protocol on Algorand. It finds optimal swap routes across multiple DEXes (Tinyman V2, Pact, Folks) and LST protocols (tALGO, xALGO), then executes them atomically through on-chain smart contracts.
 
 ## Algorand MCP Haystack Router Tools

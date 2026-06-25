@@ -166,7 +166,6 @@ Test endpoint: `https://example.x402.goplausible.xyz/`
 | `algorand-x402-python` | x402 payments in Python |
 | `algorand-x402-payment` | Runtime x402 payments (Claude as autonomous client) |
 | `haystack-router-interaction` | Best-price swaps via Haystack Router DEX aggregator |
-| `haystack-router-development` | Build swap UIs and automation with Haystack Router SDK |
 | `alpha-arcade-interaction` | Prediction markets on Algorand via Alpha Arcade |
 | `travala-booking-expert` | Travel booking, hotel search, and reservations |
 
