@@ -23,25 +23,28 @@
 
 ## Wallet Management Tools
 
-Secure wallet management. Private keys are never available to you — use these tools to sign.
+Agent wallet — the MCP server holds mnemonics in a local SQLite DB at `~/.algorand-mcp/wallet.db` (file mode `0600`) and signs on your behalf via these tools. Mnemonics are never returned in tool responses.
+
+> **Threat model**: the `wallet.db` file IS the secret. Anyone with read access to the data directory can recover every mnemonic. Mitigations are filesystem permissions (already `0600`), keeping the dir off shared/world-readable volumes, and treating it like any other secret store. For Docker: mount `~/.algorand-mcp` as a persistent named volume and restrict access to it.
 
 ### wallet_add_account
-- **Purpose**: Create a new Algorand account with nickname
+- **Purpose**: Create a new Algorand account, store it in the agent-wallet DB with a nickname, and auto-switch to it if it's the first account
 - **Parameters**:
 ```json
 {
   "nickname": "my-account"
 }
 ```
-- **Returns**: `{ address, publicKey, nickname }` — mnemonic is NEVER returned
+- **Returns**: `{ address, publicKey, nickname, index }` — mnemonic is held internally by the MCP server and never returned to the agent
 
 ### wallet_remove_account
-- **Purpose**: Remove an account from the wallet by nickname or index
+- **Purpose**: Remove an account from the wallet by nickname or index. Deletes the row from `wallet.db` and best-effort cleans up any stale OS-keychain entry left over from pre-v4 installs.
 - **Parameters**: `{ "nickname": "my-account" }` or `{ "index": 0 }`
 
 ### wallet_list_accounts
-- **Purpose**: List all wallet accounts with nicknames and addresses
-- **Parameters**: `{}`
+- **Purpose**: List wallet accounts. By default returns ACTIVE (signable) accounts only. Pass `{ "archived": true }` to return archived accounts instead — these are accounts whose mnemonic could not be recovered at startup (e.g., `wallet.db` was moved to a new machine without the OS-keychain entries from a pre-v4 install, or fresh Docker install over an existing DB). Archived rows stay in the DB for forensics but cannot sign; their nicknames are freed for reuse by new active accounts.
+- **Parameters**: `{}` (default — active accounts) or `{ "archived": true }` (returns archived accounts)
+- **Returns**: `{ archived: false|true, activeIndex, count, accounts: [{ index, active, archived, nickname, address, publicKey, createdAt }] }`
 
 ### wallet_switch_account
 - **Purpose**: Switch the active wallet account by nickname or index

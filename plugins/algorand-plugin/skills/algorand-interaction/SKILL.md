@@ -5,11 +5,11 @@ description: Interact with Algorand blockchain via the Algorand MCP server — w
 
 # Algorand MCP Interaction
 
-Interact with Algorand blockchain through the Algorand MCP server (122 tools across 14 categories).
+Interact with Algorand blockchain through the Algorand MCP server (126 tools across 15 categories, including x402 payments and Bazaar discovery).
 
 ## Key Characteristics
 
-- **Secure signing** — use `wallet_*` tools to sign; private keys are never available to you
+- **Agent wallet** — the MCP server holds mnemonics in a local SQLite DB at `~/.algorand-mcp/wallet.db` (file mode `0600`) and signs transactions on your behalf via the `wallet_*` tools. Mnemonics are never returned in tool responses. The DB file IS the secret — protect the data directory like any secret material (Docker: mount `~/.algorand-mcp` as a persistent volume).
 - **Multi-network** — supports `mainnet`, `testnet`, and `localnet`
 
 ## Calling MCP Tools
@@ -215,6 +215,12 @@ Alpha Arcade provides on-chain prediction markets on Algorand. All collateral an
 
 > For detailed Alpha Arcade workflows (orderbook mechanics, collateral, limit vs market orders), load the `alpha-arcade-interaction` skill.
 
+**x402 Payments** (2): `x402_discover_payment_requirements`, `make_http_request_with_x402` — probe an x402-protected endpoint, then pay+fetch in one call. The MCP tool handles transaction construction, signing, base64 encoding, and PAYMENT-SIGNATURE assembly internally.
+
+**x402 Bazaar Discovery** (3): `bazaar_list`, `bazaar_search`, `bazaar_get_resource_details` — browse and search the Bazaar discovery directory hosted by the configured facilitator (`facilitator.goplausible.xyz` by default) to find paid resources cataloged across the x402 ecosystem before calling `make_http_request_with_x402`.
+
+> For x402 + Bazaar workflows, load the dedicated `algorand-x402-payment` skill.
+
 **ARC-26 URI** (1): `generate_algorand_qrcode`
 
 ## QR Code Display (ARC-26 URI)
@@ -252,13 +258,20 @@ After calling the tool, **extract and paste the QR code directly in your respons
 
 API responses are paginated. All API tools accept optional `itemsPerPage` (default 10) and `pageToken` parameters. Pass `pageToken` from a previous response to fetch the next page.
 
-## x402 Payment Workflow
+## x402 Payments & Bazaar Discovery — load the dedicated skill
 
-**IMPORTANT: Do NOT attempt x402 payments using only this skill.** When you encounter an HTTP 402 response or need to pay for an x402-protected resource, you MUST load the `algorand-x402-payment` skill which contains the complete, authoritative payment flow.
+For paid HTTP resources (HTTP 402 responses), Bazaar discovery, and any workflow involving the five x402 tools (`x402_discover_payment_requirements`, `make_http_request_with_x402`, `bazaar_list`, `bazaar_search`, `bazaar_get_resource_details`), **load the dedicated `algorand-x402-payment` skill**. It covers:
 
-This skill provides the MCP tools needed for x402 (wallet, transactions, signing), but the `algorand-x402-payment` skill has the correct payload format, critical rules, and step-by-step recipe.
+- The three payment patterns (fire-and-forget, inspect-then-pay, Bazaar-then-pay)
+- Tool argument cheatsheet for all five x402/Bazaar tools
+- Mainnet-confirmation discipline and `maxAmountPerRequest` as a budget cap
+- Common pitfalls (the `paymentRequirements[N] must be an OBJECT` schema failure, etc.)
+- Wallet prerequisites (USDC opt-in, balance)
+- Protocol-level reference (PaymentRequired V2 schema, fee-payer abstraction, CAIP-2 mapping, V1 vs V2 differences)
 
-For reference examples, see [references/examples-algorand-mcp.md](references/examples-algorand-mcp.md).
+**Trigger to load**: any time you encounter an HTTP 402 response, the user mentions x402 / paid APIs / paid resources / Bazaar / "find me a paid X", or you need to call any of the five tools listed above.
+
+> The MCP tools handle transaction construction, signing, base64 encoding, and PAYMENT-SIGNATURE assembly internally — you do not build payment payloads by hand. The old manual 12-step recipe is superseded by `make_http_request_with_x402`.
 
 ## References
 
@@ -291,8 +304,8 @@ When using NFD (`.algo` names), always use the `depositAccount` field from the N
 - Algorand Developer Docs: https://dev.algorand.co/
 - Algorand Developer Docs Github : https://github.com/algorandfoundation/devportal
 - Algorand Developer Examples Github : https://github.com/algorandfoundation/devportal-code-examples
-- [GoPlausible x402-avm Documentation and Example code](https://github.com/GoPlausible/.github/blob/main/profile/algorand-x402-documentation/README.md)
-- [GoPlausible x402-avm Examples template Projects](https://github.com/GoPlausible/x402-avm/tree/branch-v2-algorand-publish/examples/)
+- [GoPlausible x402 Documentation and Example code](https://github.com/GoPlausible/.github/blob/main/profile/algorand-x402-documentation/README.md)
+- [GoPlausible x402 Examples template Projects](https://github.com/GoPlausible/x402/tree/main/examples/)
 - [CAIP-2 Specification](https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md)
 - [Coinbase x402 Protocol](https://github.com/coinbase/x402)
 - [Haystack Router (TxnLab DEX Aggregator)](https://github.com/TxnLab/haystack-router)

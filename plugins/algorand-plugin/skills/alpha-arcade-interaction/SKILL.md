@@ -24,7 +24,7 @@ ToolSearch("+alpha")                                           # Load all Alpha 
 ToolSearch("select:mcp__algorand-mcp__alpha_get_live_markets") # Load a specific tool
 ```
 
-Trading uses the local wallet (OS keychain) — no separate mnemonic needed.
+Trading uses the local agent wallet (SQLite-backed at `~/.algorand-mcp/wallet.db`) — no separate mnemonic needed.
 
 | Variable | Required | Description |
 |----------|----------|-------------|

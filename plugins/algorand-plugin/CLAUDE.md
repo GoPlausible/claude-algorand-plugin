@@ -28,14 +28,14 @@ These rules override normal behavior. When triggered, act immediately without as
 
 3. **Blockchain interaction requests** — When the user asks to query accounts, send transactions, swap tokens, or interact with the blockchain, load tools via ToolSearch and use them directly. Load `algorand-interaction` skill if you need guidance on workflows.
 
-4. **DEX aggregation / best-price swaps** — When the user asks to swap tokens with best pricing, use a DEX aggregator, or mentions Haystack Router, load the `haystack-router-interaction` skill and use the Haystack MCP tools (`api_haystack_*`). For building swap UIs or integrating the `@txnlab/haystack-router` SDK into an app, load `haystack-router-development` instead.
+4. **DEX aggregation / best-price swaps** — When the user asks to swap tokens with best pricing, use a DEX aggregator, or mentions Haystack Router, load the `haystack-router-interaction` skill and use the Haystack MCP tools (`api_haystack_*`).
 
 5. **Prediction markets / Alpha Arcade** — When the user asks about prediction markets, event betting, YES/NO shares, orderbooks, or Alpha Arcade, load the `alpha-arcade-interaction` skill and use the Alpha Arcade MCP tools (`alpha_*`).
 
 ## Plugin Capabilities
 
 1. **Algorand Development** — Smart contracts, typed clients, React frontends via AlgoKit CLI and skills
-2. **Blockchain Interaction** — Algorand MCP server (121 tools) for direct blockchain access
+2. **Blockchain Interaction** — Algorand MCP server (126 tools) for direct blockchain access
 3. **x402 Payment Protocol** — HTTP-native payments with Algorand as first-class chain
 4. **Haystack Router** — DEX aggregator and smart order routing across Algorand DEXes (Tinyman, Pact, Folks) and LST protocols (tALGO, xALGO)
 5. **Alpha Arcade** — On-chain prediction markets on Algorand (USDC-denominated, binary/multi-choice)
@@ -51,13 +51,13 @@ These rules override normal behavior. When triggered, act immediately without as
 | x402 | TypeScript x402 development | `algorand-x402-typescript` |
 | x402 | Python x402 development | `algorand-x402-python` |
 | x402 | Runtime x402 payment (Claude as client) | `algorand-x402-payment` |
-| Haystack | SDK integration, React swap UIs, Node.js automation | `haystack-router-development` |
 | Haystack | Best-price swaps via MCP tools (agent interaction) | `haystack-router-interaction` |
 | Alpha Arcade | Prediction markets via MCP tools | `alpha-arcade-interaction` |
+| Travala Booking Expert | Travel booking, hotel search, and reservations | `travala-booking-expert` |s
 
 Skills are auto-discovered — Claude invokes them based on task context or via `/skill-name`. Agent `algorand-agent` can be invoked for complex multi-step Algorand tasks.
 
-## MCP Tool Categories (122 tools)
+## MCP Tool Categories (126 tools)
 
 - **Wallet** (10) — `wallet_add_account`, `wallet_remove_account`, `wallet_list_accounts`, `wallet_switch_account`, `wallet_get_info`, `wallet_get_assets`, `wallet_sign_transaction`, `wallet_sign_transaction_group`, `wallet_sign_data`, `wallet_optin_asset`
 - **Account Management** (8) — `create_account`, `rekey_account`, `mnemonic_to_mdk`, `mdk_to_mnemonic`, `secret_key_to_mnemonic`, `mnemonic_to_secret_key`, `seed_from_mnemonic`, `mnemonic_from_seed`
@@ -71,8 +71,12 @@ Skills are auto-discovered — Claude invokes them based on task context or via 
 - **Haystack Router** (3) — `api_haystack_get_swap_quote`, `api_haystack_execute_swap`, `api_haystack_needs_optin`
 - **Pera Asset Verification** (3) — `api_pera_asset_verification_status`, `api_pera_verified_asset_details`, `api_pera_verified_asset_search`
 - **Alpha Arcade** (15) — Read: `alpha_get_live_markets`, `alpha_get_reward_markets`, `alpha_get_market`, `alpha_get_orderbook`, `alpha_get_open_orders`, `alpha_get_positions`. Trade: `alpha_create_limit_order`, `alpha_create_market_order`, `alpha_cancel_order`, `alpha_amend_order`, `alpha_propose_match`, `alpha_split_shares`, `alpha_merge_shares`, `alpha_claim`
+- **x402 Payments** (2) — `x402_discover_payment_requirements`, `make_http_request_with_x402` — probe an x402-protected endpoint for payment requirements, then pay-and-fetch in one call. The MCP tool handles atomic-group construction, signing, base64 encoding, and PAYMENT-SIGNATURE assembly internally.
+- **x402 Bazaar Discovery** (3) — `bazaar_list`, `bazaar_search`, `bazaar_get_resource_details` — browse and search the Bazaar discovery directory hosted by the configured facilitator (`facilitator.goplausible.xyz` by default) to find paid resources cataloged across the x402 ecosystem before calling `make_http_request_with_x402`.
 - **ARC-26 URI** (1) — `generate_algorand_qrcode`
 - **Knowledge** (1) — `get_knowledge_doc` (categories: `arcs`, `sdks`, `algokit`, `algokit-utils`, `tealscript`, `puya`, `liquid-auth`, `python`, `developers`, `clis`, `nodes`, `details`)
+
+> For x402 + Bazaar workflows, load the dedicated `algorand-x402-payment` skill.
 
 ## Skills vs MCP Tools
 
@@ -87,7 +91,7 @@ Skills are auto-discovered — Claude invokes them based on task context or via 
 
 ## Signing
 
-- **`wallet_sign_transaction`** — Signs using the secure OS keychain wallet.
+- **`wallet_sign_transaction`** — Signs using the agent wallet (mnemonics held by the MCP server in `~/.algorand-mcp/wallet.db`, mode `0600`).
 - **`sign_transaction`** — Signs with a raw secret key hex. Only use when the user explicitly provides their own key.
 - **`wallet_sign_transaction_group`** — Signs atomic groups (all-or-nothing) via wallet.
 
@@ -211,8 +215,8 @@ This applies to results from: `send_raw_transaction`, `wallet_optin_asset`, `api
 - Algorand Developer Docs: https://dev.algorand.co/
 - Algorand Developer Docs Github : https://github.com/algorandfoundation/devportal
 - Algorand Developer Examples Github : https://github.com/algorandfoundation/devportal-code-examples
-- GoPlausible x402-avm Documentation and Example code : https://github.com/GoPlausible/.github/blob/main/profile/algorand-x402-documentation/README.md
-- GoPlausible x402-avm Examples template Projects : https://github.com/GoPlausible/x402-avm/tree/branch-v2-algorand-publish/examples/
+- GoPlausible x402 Documentation and Example code : https://github.com/GoPlausible/.github/blob/main/profile/algorand-x402-documentation/README.md
+- GoPlausible x402 Examples template Projects : https://github.com/GoPlausible/x402/tree/main/examples/
 - CAIP-2 Specification : https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md
 - Coinbase x402 Protocol : https://github.com/coinbase/x402
 - Haystack Router (TxnLab DEX Aggregator) : https://github.com/TxnLab/haystack-router

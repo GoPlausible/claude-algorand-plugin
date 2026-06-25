@@ -11,12 +11,12 @@ Algorand blockchain integration for [Claude Code](https://claude.ai/code) — by
   - `algorand-typescript` — TypeScript smart contracts (Algorand TypeScript / PuyaTs)
   - `algorand-python` — Python smart contracts (Algorand Python / PuyaPy)
   - `algorand-interaction` — Blockchain interaction via MCP (wallet, transactions, swaps, NFD)
+  - `algorand-x402-payment` — Runtime x402 payments (Claude as autonomous client)
   - `algorand-x402-typescript` — Build x402 payment servers/clients in TypeScript
   - `algorand-x402-python` — Build x402 payment servers/clients in Python
-  - `algorand-x402-payment` — Runtime x402 payments (Claude as autonomous client)
   - `haystack-router-interaction` — Best-price swaps via Haystack Router DEX aggregator
-  - `haystack-router-development` — Build swap UIs and Node.js automation with Haystack Router SDK
   - `alpha-arcade-interaction` — Prediction markets on Algorand via Alpha Arcade
+  - `travala-booking-expert` — Travel booking, hotel search, and reservations
 - **Agent**: `algorand-agent` for complex multi-step Algorand tasks
 - **Multi-network**: `mainnet`, `testnet`, `localnet`
 - **Secure wallet**: private keys never exposed
@@ -168,6 +168,7 @@ Test endpoint: `https://example.x402.goplausible.xyz/`
 | `haystack-router-interaction` | Best-price swaps via Haystack Router DEX aggregator |
 | `haystack-router-development` | Build swap UIs and automation with Haystack Router SDK |
 | `alpha-arcade-interaction` | Prediction markets on Algorand via Alpha Arcade |
+| `travala-booking-expert` | Travel booking, hotel search, and reservations |
 
 ## Links
 

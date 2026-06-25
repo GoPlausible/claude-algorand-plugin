@@ -1,10 +1,20 @@
 {
   "mcpServers": {
-    
     "algorand-mcp": {
+      "name": "Algorand MCP",
+      "description": "Remote Algorand MCP (blockchain interaction, smart contracts, x402 payments)",
       "type": "stdio",
       "command": "npx",
-      "args": ["@goplausible/algorand-mcp@latest"]
+      "args": [
+        "@goplausible/algorand-mcp@latest"
+      ]
+    },
+    "travala-mcp": {
+      "id": "travala-mcp",
+      "name": "Travala Travel MCP",
+      "description": "Remote Travala travel booking MCP (search, book, pay, confirm)",
+      "type": "http",
+      "url": "https://travel-mcp.travala.com/mcp"
     }
   }
 }

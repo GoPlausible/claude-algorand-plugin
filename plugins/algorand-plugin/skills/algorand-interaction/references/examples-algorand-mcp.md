@@ -703,156 +703,17 @@ simulate_transactions {
 
 This lets you verify a transaction will succeed before actually submitting it.
 
+
 ---
 
-## x402 Payment Workflow
+## x402 Payments & Bazaar Discovery — see the dedicated skill
 
-> **STOP: Before using this reference, you MUST load the `algorand-x402-payment` skill first.** That skill contains the authoritative payment flow, critical rules, and correct PAYMENT-SIGNATURE format. Do NOT attempt x402 payments using only the examples below — they are a reference supplement, not a standalone guide. Load the skill: `algorand-x402-payment`
+For workflow examples covering paid HTTP resources (HTTP 402), the `x402_discover_payment_requirements` and `make_http_request_with_x402` tools, and Bazaar discovery (`bazaar_list`, `bazaar_search`, `bazaar_get_resource_details`), **load the `algorand-x402-payment` skill**. It contains:
 
-When an HTTP request returns a 402 response, follow these steps to pay for the resource.
+- The three payment patterns with full input/output examples
+- Tool argument tables (including all client-side post-filters on `bazaar_search`)
+- Response shape examples
+- Common errors with recovery steps
+- Worked end-to-end testnet weather example
 
-### Understanding the 402 Response
-
-The 402 response contains an `accepts` array. Each entry has:
-- `scheme` — payment scheme (e.g., `"exact"`)
-- `network` — CAIP-2 network identifier
-- `maxAmountRequired` — amount to pay (in base units)
-- `asset` — `"0"` for native ALGO, or ASA ID as string
-- `payTo` — recipient address
-- `extra.feePayer` — facilitator address that pays transaction fees
-
-### CAIP-2 Network Mapping
-
-| CAIP-2 Identifier | Network |
-|--------------------|---------|
-| `algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=` | `testnet` |
-| `algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=` | `mainnet` |
-
-### Step 1: Check wallet
-```
-wallet_get_info { "network": "<network>" }
-```
-
-### Step 2: Build fee payer transaction
-
-The facilitator sponsors fees for the entire group. The fee payer's `fee` must equal **N × 1000 µAlgo** (N = total transactions in group). For a 2-txn group: fee = 2 × 1000 = **2000**.
-
-```
-make_payment_txn {
-  "from": "<feePayer>",
-  "to": "<feePayer>",
-  "amount": 0,
-  "fee": 2000,
-  "flatFee": true,
-  "network": "<network>"
-}
-```
-
-### Step 3: Build payment transaction
-
-The payment transaction fee is 0 since the facilitator covers it.
-
-**For native ALGO (asset = "0"):**
-```
-make_payment_txn {
-  "from": "<your_address>",
-  "to": "<payTo>",
-  "amount": <maxAmountRequired>,
-  "fee": 0,
-  "flatFee": true,
-  "network": "<network>"
-}
-```
-
-**For ASA (asset is an ASA ID):**
-```
-make_asset_transfer_txn {
-  "from": "<your_address>",
-  "to": "<payTo>",
-  "assetIndex": <asset>,
-  "amount": <maxAmountRequired>,
-  "fee": 0,
-  "flatFee": true,
-  "network": "<network>"
-}
-```
-
-### Step 4: Group the transactions
-```
-assign_group_id {
-  "transactions": [fee_payer_txn, payment_txn]
-}
-```
-
-### Step 5: Sign ONLY the payment transaction (index 1)
-```
-wallet_sign_transaction {
-  "transaction": <grouped_payment_txn>,
-  "network": "<network>"
-}
-```
-> Leave the fee payer transaction (index 0) unsigned — the facilitator signs it server-side.
-
-### Step 6: Encode the unsigned fee payer transaction
-
-Convert the grouped fee payer transaction (index 0) to base64 bytes:
-```
-encode_unsigned_transaction {
-  "transaction": <grouped_fee_payer_txn>
-}
-```
-> This produces the canonical `algosdk.encodeUnsignedTransaction()` base64 encoding needed for the PAYMENT-SIGNATURE payload.
-
-### Step 7: Construct the PAYMENT-SIGNATURE payload
-
-Build this JSON string:
-```json
-{
-  "x402Version": 2,
-  "scheme": "exact",
-  "network": "<CAIP-2 network identifier from accepts>",
-  "payload": {
-    "paymentGroup": ["<base64 from encode_unsigned_transaction>", "<base64 from wallet_sign_transaction>"],
-    "paymentIndex": 1
-  },
-  "accepted": <the exact accepts[] entry you chose to pay with — copy it verbatim as an object>
-}
-```
-
-> **Critical**: The `accepted` field is REQUIRED. It must be an exact copy of the `accepts[]` entry you chose (including all fields: scheme, network, price, payTo, asset, maxAmountRequired, extra, etc.). Without it, the server cannot match your payment to a requirement and will reject with 402.
-
-### Step 8: Retry with payment
-
-Base64-encode the JSON from Step 7 and send it as the `PAYMENT-SIGNATURE` header using `curl`:
-
-> **CRITICAL — Base64 blob handling**: NEVER manually copy-paste base64 blob strings inline into a JSON string or shell command. Base64 blobs are long and a single character corruption (e.g., `5` → `4`) will cause "signature does not match sender" errors. Instead, ALWAYS:
-> 1. Store each blob in a separate shell variable first
-> 2. Interpolate variables into the JSON using `${VAR}` syntax
-> 3. Use `printf '%s'` (not `echo`) to pipe JSON to `base64`
-> 4. Strip newlines from base64 output with `tr -d '\n'` (macOS `base64` adds line breaks)
-
-```bash
-# Store blobs in variables — NEVER inline them manually
-UNSIGNED_FEE_PAYER="<bytes from encode_unsigned_transaction>"
-SIGNED_PAYMENT="<blob from wallet_sign_transaction>"
-
-# Build JSON with variable interpolation
-PAYMENT_JSON="{\"x402Version\":2,\"scheme\":\"exact\",\"network\":\"<CAIP-2 identifier>\",\"payload\":{\"paymentGroup\":[\"${UNSIGNED_FEE_PAYER}\",\"${SIGNED_PAYMENT}\"],\"paymentIndex\":1},\"accepted\":<accepted entry as JSON>}"
-
-# Base64-encode and send — use printf, strip newlines
-PAYMENT_B64=$(printf '%s' "$PAYMENT_JSON" | base64 | tr -d '\n')
-curl -s -H "PAYMENT-SIGNATURE: ${PAYMENT_B64}" "<resource_url>"
-```
-
-The server verifies the payment, submits the transaction group, and returns the resource.
-
-> **Important**: The `paymentGroup` array order must match: index 0 = unsigned fee payer txn, index 1 = signed payment txn. The `paymentIndex` indicates which transaction carries the actual payment.
-
-### Common x402 Errors
-
-| Error | Cause | Solution |
-|-------|-------|---------|
-| `Payment transaction signature does not match sender` | Base64 blob was corrupted during copy-paste into shell command | ALWAYS store blobs in shell variables first, then interpolate — never inline long base64 strings manually |
-| `402` returned despite payment header | Missing `accepted` field in payload, or `accepted` doesn't match an `accepts[]` entry exactly | Copy the chosen `accepts[]` entry verbatim into the `accepted` field |
-| `402` with expired transactions | Too much time between building transactions and sending payment | Rebuild transactions immediately before sending — `firstValid`/`lastValid` window is ~1000 rounds |
-| `Simulation failed` | Insufficient balance, asset not opted in, or group structure wrong | Check USDC/ALGO balance, verify opt-in, ensure group order is [feePayer, payment] |
+The dedicated skill is the source of truth for x402 + Bazaar workflows. The examples in this file are for the rest of the algorand-mcp tool surface (wallet, transactions, ASA, AMM, NFD, etc.).

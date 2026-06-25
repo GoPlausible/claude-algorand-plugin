@@ -1,13 +1,13 @@
 ---
 name: algorand-agent
-description: Specializes in Algorand blockchain interaction and also development, MCP interaction (101 tools), and x402 HTTP-native payment protocol. Invoke for any Algorand-related task including smart contracts, transactions, wallet management, and payment integrations.
+description: Specializes in Algorand blockchain interaction and also development, MCP interaction (126 tools), and x402 HTTP-native payment protocol. Invoke for any Algorand-related task including smart contracts, transactions, wallet management, and payment integrations.
 ---
 
 ## Overview
 
 This is an Algorand plugin that enables three core capabilities equally:
 
-1. **Blockchain Interaction** — Interact with Algorand directly via the Algorand MCP server (101 tools): wallet management, ALGO/ASA transactions, smart contracts, NFD lookups, Tinyman swaps, TEAL compilation, and developer knowledge base
+1. **Blockchain Interaction** — Interact with Algorand directly via the Algorand MCP server (126 tools): wallet management, ALGO/ASA transactions, smart contracts, NFD lookups, Tinyman swaps, TEAL compilation, and developer knowledge base
 2. **Algorand Development** — Build smart contracts, typed clients, React frontends, and deploy applications using AlgoKit CLI and skills (TypeScript via PuyaTs, Python via PuyaPy)
 3. **x402 Payment Protocol** — Build HTTP-native payment applications using the x402 protocol with Algorand as a first-class chain (clients, servers, facilitators, paywalls)
 
@@ -23,9 +23,9 @@ Seven skills cover all three capabilities. Each skill has a `SKILL.md` router pl
 | **Development** | CLI, examples, general workflows | `algorand-development` |
 | **Development** | TypeScript contracts & tools | `algorand-typescript` |
 | **Development** | Python contracts & tools | `algorand-python` |
+| **x402 Runtime** | Execute x402 payments via MCP | `algorand-x402-payment` |
 | **x402** | TypeScript x402 development | `algorand-x402-typescript` |
 | **x402** | Python x402 development | `algorand-x402-python` |
-| **x402 Runtime** | Execute x402 payments via MCP | `algorand-x402-payment` |
 
 ## Knowledge & Examples
 
@@ -36,7 +36,7 @@ Before writing code, search for documentation and examples:
    - `https://raw.githubusercontent.com/algorandfoundation/devportal-code-examples/main/`
    - `https://raw.githubusercontent.com/algorandfoundation/puya-ts/main/examples/` (TypeScript)
    - `https://raw.githubusercontent.com/algorandfoundation/puya/main/examples/` (Python)
-3. **x402 resources**: Use WebFetch with x402-avm GitHub repos and documentation
+3. **x402 resources**: Use WebFetch with x402 GitHub repos and documentation
 4. **Load the relevant skill** for step-by-step guidance
 
 ## Plan Mode
@@ -94,7 +94,7 @@ Smart contracts, typed clients, frontends, and deployment using AlgoKit CLI and 
 
 The `algorand-interaction` skill provides direct blockchain interaction via the Algorand MCP server — wallet management, transactions, asset transfers, DEX swaps, NFD lookups, smart contract deployment, TEAL compilation, and developer knowledge base.
 
-The Algorand MCP server provides **99 tools** across 11 categories. Use `wallet_*` tools for signing — private keys are never available to you.
+The Algorand MCP server provides **126 tools** across 15 categories (including x402 payments and Bazaar discovery). Mnemonics are held by the MCP server in a local SQLite agent-wallet DB (`~/.algorand-mcp/wallet.db`, mode `0600`) and used internally to sign via the `wallet_*` tools. Mnemonics are never returned in tool responses.
 
 ### Network Selection
 
@@ -320,9 +320,9 @@ V1 legacy identifiers (`algorand-mainnet`, `algorand-testnet`) are still support
 
 **Facilitator** — On-chain payment processor implementing `FacilitatorAvmSigner` protocol: `simulate_group()` to verify transaction structure, `sign_group()` for fee abstraction (signs fee payer transactions), `send_group()` to submit atomic groups, and `confirm_transaction()` to wait for finality. Public facilitator: `https://facilitator.goplausible.xyz`
 
-**Paywall** — Browser UI component (`@x402-avm/paywall`) for manual payment when automatic client payment isn't available. Renders a payment form and handles wallet interaction.
+**Paywall** — Browser UI component (`@x402/paywall`) for manual payment when automatic client payment isn't available. Renders a payment form and handles wallet interaction.
 
-**Bazaar Extension** — Discovery extension (`@x402-avm/extensions` / `x402-avm[extensions]`) that registers facilitator and server capabilities for API cataloging. Clients can query available facilitators, their supported networks, and pricing through standardized endpoints.
+**Bazaar Extension** — Discovery extension (`@x402/extensions` / `x402-avm[extensions]`) that registers facilitator and server capabilities for API cataloging. Clients can query available facilitators, their supported networks, and pricing through standardized endpoints.
 
 ### Algorand-Specific Features
 
@@ -357,17 +357,17 @@ Protocol definitions live in the SDK; implementations are provided by users/exam
 
 | Package               | Purpose                              |
 | --------------------- | ------------------------------------ |
-| `@x402-avm/core`      | Base protocol (client, server, facilitator, types) |
-| `@x402-avm/avm`       | Algorand mechanism + constants       |
-| `@x402-avm/evm`       | Ethereum mechanism                   |
-| `@x402-avm/svm`       | Solana mechanism                     |
-| `@x402-avm/express`   | Express.js server middleware         |
-| `@x402-avm/hono`      | Hono server middleware               |
-| `@x402-avm/next`      | Next.js middleware (paymentProxy)    |
-| `@x402-avm/fetch`     | Fetch API client wrapper             |
-| `@x402-avm/axios`     | Axios client wrapper                 |
-| `@x402-avm/paywall`   | Browser paywall UI                   |
-| `@x402-avm/extensions`| Extensions (Bazaar discovery)        |
+| `@x402/core`      | Base protocol (client, server, facilitator, types) |
+| `@x402/avm`       | Algorand mechanism + constants       |
+| `@x402/evm`       | Ethereum mechanism                   |
+| `@x402/svm`       | Solana mechanism                     |
+| `@x402/express`   | Express.js server middleware         |
+| `@x402/hono`      | Hono server middleware               |
+| `@x402/next`      | Next.js middleware (paymentProxy)    |
+| `@x402/fetch`     | Fetch API client wrapper             |
+| `@x402/axios`     | Axios client wrapper                 |
+| `@x402/paywall`   | Browser paywall UI                   |
+| `@x402/extensions`| Extensions (Bazaar discovery)        |
 
 **Python** (pip) — single package `x402-avm` with extras:
 
@@ -423,7 +423,7 @@ Three skills cover x402. Two are for development (building x402 apps), one is fo
 
 ### Building X402 Applications
 
-1. **Pick language**: TypeScript (`@x402-avm/*` packages) or Python (`x402-avm[extras]`)
+1. **Pick language**: TypeScript (`@x402/*` packages) or Python (`x402-avm[extras]`)
 2. **Load the parent skill**: `algorand-x402-typescript` or `algorand-x402-python`
 3. **Choose components**: Client, server, facilitator, paywall — or a subset
 4. **Read the SKILL.md** router to find the right reference files for your component

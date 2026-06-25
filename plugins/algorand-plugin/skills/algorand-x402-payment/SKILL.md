@@ -1,84 +1,191 @@
 ---
 name: algorand-x402-payment
-description: Execute x402 payments at runtime using Algorand MCP tools. Use when Claude encounters HTTP 402 Payment Required responses, needs to access paid APIs, or the user asks to fetch x402-protected resources.
+description: Execute x402 payments at runtime using the algorand-mcp x402 tools. Use when Claude encounters HTTP 402 Payment Required responses, needs to access paid APIs, wants to discover paid resources via the Bazaar directory, or the user asks to fetch x402-protected resources.
 ---
 
 # x402 Runtime Payment
 
-You (Claude) are the x402 client. When you encounter an HTTP 402 response with `PaymentRequirements`, use MCP tools to build, sign, and submit an Algorand payment, then retry the request.
+You (Claude) pay for x402-protected HTTP resources by calling **dedicated MCP tools** that handle the entire protocol — discovery, transaction construction, signing, header assembly, and retry. You do not build payment payloads by hand.
+
+The MCP exposes five x402-related tools, grouped into two families:
+
+| Family | Tools | What they do |
+|---|---|---|
+| Payment (2) | `x402_discover_payment_requirements`, `make_http_request_with_x402` | Probe a paid endpoint for its cost, then pay + fetch in one tool call |
+| Bazaar Discovery (3) | `bazaar_list`, `bazaar_search`, `bazaar_get_resource_details` | Browse / search / inspect the catalog of paid resources hosted by the facilitator (`facilitator.goplausible.xyz` by default) |
 
 ## When to Use
 
-- HTTP response with status `402` and body containing `x402Version` and `accepts[]`
-- User asks to access a paid/protected API or resource
+- HTTP response with status `402` from any endpoint
+- User asks to access a paid / protected API or resource
 - User mentions x402, payment-required, or paid endpoint access
+- User asks "what paid APIs are available", "find me a paid X", "what does X cost"
 
-## MANDATORY: Read reference before constructing payment
+## The Three Patterns (pick by trust level)
 
-**You MUST read [references/x402-payment-flow.md](references/x402-payment-flow.md) before constructing any PAYMENT-SIGNATURE.** Do NOT rely on your training data for the payload format — it is likely wrong. The reference file contains the exact, tested format.
+### Pattern 1 — Fire-and-forget (trusted endpoint, capped cost)
 
-## Quick Flow
+When the agent knows the endpoint URL and just wants the data:
 
-1. `curl` the URL → detect 402, parse `accepts[]`
-2. Choose an `accepts` entry → extract `network`, `payTo`, `amount`, `asset`, `feePayer`
-3. Map CAIP-2 network → MCP network parameter
-4. `wallet_get_info` → verify wallet, get address
-5. Check asset opt-in (ASA only) → `wallet_optin_asset` if needed
-6. `make_payment_txn` → fee payer (from=feePayer, to=feePayer, amount=0, fee=**N×1000** where N=txn count in group [e.g. 2000 for 2 txns], flatFee=true)
-7. `make_payment_txn` or `make_asset_transfer_txn` → payment (fee=0, flatFee=true)
-8. `assign_group_id` → group [feePayer@0, payment@1]
-9. `wallet_sign_transaction` → sign payment only (index 1)
-10. `encode_unsigned_transaction` → encode fee payer (index 0)
-11. Construct PAYMENT-SIGNATURE JSON — **exact format below**
-12. `curl -H 'PAYMENT-SIGNATURE: <base64>'` → retry, get 200
-
-## PAYMENT-SIGNATURE JSON Format (EXACT — do not deviate)
-
-```json
-{
-  "x402Version": 2,
-  "scheme": "exact",
-  "network": "<CAIP-2 network identifier from accepts>",
-  "payload": {
-    "paymentGroup": ["<base64 from encode_unsigned_transaction>", "<base64 from wallet_sign_transaction>"],
-    "paymentIndex": 1
-  },
-  "accepted": { <verbatim copy of chosen accepts[] entry> }
+```
+make_http_request_with_x402 {
+  baseURL: "https://example.x402.goplausible.xyz",
+  path: "/avm/weather",
+  method: "GET",
+  preferredNetwork: "testnet",
+  maxAmountPerRequest: 10000
 }
 ```
 
-**WARNING: The payload field is `paymentGroup` — an array of two base64 strings [unsigned_fee_payer, signed_payment]. Do NOT use `transactions`, do NOT use an array of objects. Any other format will be rejected.**
+One tool call. The tool probes for the 402, picks an Algorand entry within budget, builds the atomic group, signs the payment leg, retries, returns the resource. `maxAmountPerRequest` is the safety net — if cost exceeds it, the call fails clean.
 
-## CAIP-2 Network Mapping
+### Pattern 2 — Inspect, then pay (recommended default)
 
-| CAIP-2 Genesis Hash | MCP Network |
-|----------------------|-------------|
-| `SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=` | `"testnet"` |
-| `wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=` | `"mainnet"` |
+Best for anything non-trivial. Discovery is free.
 
-## Asset IDs
+```
+1. x402_discover_payment_requirements {
+     baseURL: "https://example.x402.goplausible.xyz",
+     path: "/avm/weather",
+     method: "GET"
+   }
 
-| Asset | Testnet | Mainnet | Decimals |
-|-------|---------|---------|----------|
-| ALGO | `0` (native) | `0` (native) | 6 |
-| USDC | `10458941` | `31566704` | 6 |
+2. Read the response — choose an accepts[] entry, confirm with user if needed
 
-## Critical Rules
+3. make_http_request_with_x402 {
+     baseURL: "https://example.x402.goplausible.xyz",
+     path: "/avm/weather",
+     method: "GET",
+     paymentRequirements: <accepts[] from step 1>,
+     preferredNetwork: "testnet",
+     maxAmountPerRequest: 10000
+   }
+```
 
-1. **Fee payer fee = N × 1000 µAlgo** (where N = total number of transactions in the group). For a standard 2-txn x402 group: fee = 2 × 1000 = **2000**. The fee payer covers fees for ALL transactions; every other transaction in the group MUST have fee=0. **NEVER set fee=0 on the fee payer** — this causes "txgroup had 0 in fees, which is less than the minimum N * 1000" errors.
-2. **`flatFee: true`** on BOTH transactions — prevents the SDK from overriding fee values. Without it, the SDK sets min fee (1000) on every txn, breaking the fee-payer pattern.
-3. **`accepted` field is REQUIRED** — Include a verbatim copy of the chosen `accepts[]` entry in the PAYMENT-SIGNATURE JSON. Without it, the server rejects.
-4. **Group order**: feePayer at index 0, payment at index 1. `paymentIndex: 1`.
-5. **Only sign the payment** (index 1) — the facilitator signs the fee payer server-side.
-6. **Mainnet = real money** — always confirm with the user before mainnet payments.
-7. **One retry only** — if the retry also returns 402, stop and report the error.
-8. **`feePayer` address** comes from `extra.feePayer` in the PaymentRequirements.
+Passing `paymentRequirements` from step 1 skips the internal re-probe (one HTTP round-trip instead of two).
+
+### Pattern 3 — Discover via Bazaar, then pay (find-then-pay)
+
+When the user describes what they want but you don't know the URL:
+
+```
+1. bazaar_search {
+     query: "weather",
+     network: "algorand-mainnet",
+     maxUsdPrice: 0.10,
+     limit: 5
+   }
+
+2. Show the user the top result(s); confirm; capture the chosen resourceUrl
+
+3. bazaar_get_resource_details { resource: "<chosen resourceUrl>" }
+   (optional — fetches the verbatim accepts[] for the chosen resource)
+
+4. make_http_request_with_x402 {
+     baseURL: "<base from resourceUrl>",
+     path: "<path from resourceUrl>",
+     method: "GET",
+     paymentRequirements: <accepts[] from step 3 if you did step 3>,
+     preferredNetwork: "mainnet",
+     maxAmountPerRequest: 100000
+   }
+```
+
+## What the MCP tool handles for you
+
+You do **not** need to:
+- Construct or base64-encode the `PAYMENT-SIGNATURE` header
+- Build the fee-payer transaction (`fee = N × 1000`, `flatFee: true`)
+- Build the payment transaction (`fee = 0`, `flatFee: true`)
+- Assign group IDs
+- Decide which transactions to sign vs. leave unsigned
+- Encode unsigned transactions to base64 msgpack
+- Map CAIP-2 network identifiers (`algorand:SGO1…`) to MCP networks (`testnet`)
+- Retry the HTTP request with the payment header
+
+All of this is internal to `make_http_request_with_x402`. The agent's job is only to **choose the resource, confirm cost with the user (especially on mainnet), and call the tool with the right arguments**.
+
+## Tool argument cheatsheet
+
+### `x402_discover_payment_requirements`
+```
+{ baseURL, path, method, queryParams?, body? }
+```
+Returns `{ result: { status, x402, x402Version, accepts: [...] }, _atomicUnitsNote }`. Read-only — no payment, no signing.
+
+### `make_http_request_with_x402`
+```
+{
+  baseURL,                       // required
+  path,                          // required
+  method,                        // required: GET | POST | PUT | DELETE | PATCH
+  paymentRequirements?,          // optional: accepts[] from discover or bazaar_get_resource_details; if omitted, tool probes internally
+  preferredNetwork?,             // "mainnet" | "testnet" | "localnet"; if omitted, cheapest affordable Algorand entry is chosen
+  maxAmountPerRequest?,          // integer in atomic units; budget cap
+  queryParams?, body?, headers?, // optional HTTP bits
+  correlationId?,                // optional X-Correlation-ID
+  extensions?                    // optional pass-through, traceability only
+}
+```
+
+### `bazaar_list`
+```
+{ network?, method?, merchantId?, limit?, offset?, full? }
+```
+Default: compact summary (URL, description, Algorand-payable accepts only, popularity). `full: true` returns the verbatim record per item. `network` accepts friendly names (`"algorand-mainnet"`, `"mainnet"`, etc.) or raw CAIP-2.
+
+### `bazaar_search`
+```
+{
+  query,                  // required, min 1 char
+  limit?,                 // 1..20, default 10
+  network?,
+  includeTestnets?,       // default false (mainnet-only)
+  scheme?,                // "exact" | "upto" — client-side filter
+  maxUsdPrice?,           // USD cap, client-side filter (computed from amount + decimals)
+  asset?, payTo?,         // client-side filters
+  extensions?             // require discoveryInfo / specific extension key
+}
+```
+
+### `bazaar_get_resource_details`
+```
+{ resource }  // exact resourceUrl
+```
+Returns the verbatim resource record with full `accepts[]`, `discoveryInfo`, popularity counters. Throws `-32600` if no exact match.
+
+## Always
+
+- **Mainnet = real money.** Always confirm the action (URL, cost in USD, payTo) with the user before mainnet payments. The MCP tool will sign as soon as it's called.
+- **Set `maxAmountPerRequest`.** Always. It's the only thing protecting against an endpoint silently quoting an unexpected price.
+- **Default `preferredNetwork: "testnet"`** during development. Switch to `"mainnet"` only when the user explicitly opted in to real funds.
+- **Amounts are in atomic units.** USDC has 6 decimals → `1,000,000` atomic units = `$1.00`. Most paid endpoints currently quote `1000`–`10000` atomic units = `$0.001`–`$0.01`.
+
+## Common Pitfalls
+
+| Pitfall | Why it breaks | Fix |
+|---|---|---|
+| Passing `preferredNetwork` or `maxAmountPerRequest` **inside** the `paymentRequirements` array | The array is supposed to contain `accepts[]` objects only — sibling args belong at the top level | Keep `paymentRequirements: [ {...} ]`; put `preferredNetwork` and `maxAmountPerRequest` as sibling top-level fields |
+| Synthesizing or hand-editing `paymentRequirements` entries | The schema validation rejects anything missing `scheme`/`network`/`payTo`/`asset`/`amount` | Pass the `accepts[]` array verbatim from `x402_discover_payment_requirements` or `bazaar_get_resource_details` |
+| Retrying after a `Payment rejected by server` | The failure was deterministic (stale params, insufficient balance, not opted in) | Read the snippet; surface to user; do not retry blindly |
+| Trying to pay a resource that returns only non-Algorand entries (Base/Solana) | This MCP can only sign Algorand transactions | Tool errors with `No payment requirement is satisfiable on Algorand` — tell the user the endpoint isn't reachable from the Algorand wallet |
+| `extensions: <extensions from step 1>` | `x402_discover_payment_requirements` does not surface a top-level `extensions` field, so this passes `undefined` | Omit unless you have Bazaar metadata from `bazaar_get_resource_details` to attach for traceability |
+
+## Wallet prerequisites (one-time per asset)
+
+Before any paid call can succeed, the active wallet must:
+
+1. **Exist** — `wallet_get_info` returns an active account, not "no accounts."
+2. **Be opted into the payment asset.** USDC testnet is ASA `10458941`, mainnet `31566704`. Check via `api_algod_get_account_asset_info`. If not opted in: `wallet_optin_asset { assetId: 10458941, network: "testnet" }` (costs 0.1 ALGO min-balance bump).
+3. **Hold enough of the payment asset.** USDC faucet for testnet: https://faucet.circle.com/
+
+A solid session-opener: `wallet_get_info { network: "testnet" }` → if no account, `wallet_add_account` → opt in to USDC once → proceed.
 
 ## Test Endpoint
 
-`https://example.x402.goplausible.xyz/` — testnet x402-protected resources for testing.
+`https://example.x402.goplausible.xyz/avm/weather` — testnet x402-protected endpoint. Returns `{ "report": { "weather": "sunny", "temperature": 70 } }` after paying 1,000 atomic units of USDC (= $0.001).
 
 ## References
 
-- [x402-payment-flow.md](references/x402-payment-flow.md) — Complete step-by-step MCP tool recipe with worked example
-- [x402-payment-reference.md](references/x402-payment-reference.md) — Protocol spec, header format, schemas, CAIP-2 identifiers
+- [x402-payment-flow.md](references/x402-payment-flow.md) — Recommended patterns with worked examples for each tool
+- [x402-payment-reference.md](references/x402-payment-reference.md) — Protocol-level background: PaymentRequired V2 schema, CAIP-2 mapping, fee-abstraction model, V1 vs V2 differences. Useful for understanding what the MCP tool does internally; you do not need to build any of this yourself.
