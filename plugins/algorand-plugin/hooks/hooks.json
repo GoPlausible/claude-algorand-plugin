@@ -11,14 +11,6 @@
         ]
       }
     ],
-    "PostToolUse": [
-      {
-        "matcher": "WebFetch",
-        "hooks": [
-          { "type": "prompt", "prompt": "If the above result contains HTTP 402, 'Payment Required', or 'status code 402', this is an x402-protected resource. Do NOT ask the user what to do. Instead, IMMEDIATELY load the algorand-x402-payment skill and follow the x402 payment flow to pay for and access the resource." }
-        ]
-      }
-    ],
     "PostToolUseFailure": [
       {
         "matcher": "WebFetch",
