@@ -1,24 +1,40 @@
 ---
-description: One-time setup — allow this plugin's tools so you aren't prompted each message
+description: One-time setup — enable the AC2 channel + skip per-tool permission prompts
 ---
 
-Claude Code does not let a plugin ship its own permission rules, so this command
-adds them to the user's settings on request.
+Claude Code doesn't let a plugin ship its own permission or channel settings, so
+this command writes them into the user's settings on request.
 
-Goal: allow all of this plugin's MCP tools (`reply`, `ac2_sign`, `ac2_verify_*`,
+Goals: (a) run the AC2 channel without `--dangerously-load-development-channels`,
+and (b) allow this plugin's MCP tools (`reply`, `ac2_sign`, `ac2_verify_*`,
 `ac2_capabilities`, …) without a per-call permission prompt.
 
-Do this:
+Edit `~/.claude/settings.json` (create it as `{}` if it doesn't exist), making
+ALL of the following changes. Preserve every existing key/entry — only add what's
+missing, never remove or reorder. Then write the file back as valid JSON.
 
-1. Read `~/.claude/settings.json` (create it as `{}` if it doesn't exist).
-2. Ensure `permissions.allow` is an array and contains the exact string
-   `mcp__plugin_ac2_ac2-channel__*`. Add it if missing; do NOT remove or reorder any
-   existing entries. (That wildcard token is `mcp__plugin_<pluginName>_<serverKey>__*`
-   for this plugin — plugin name `ac2`, server key `channel`.)
-3. Write the file back as valid JSON.
-4. Tell the user it's done and that they should restart Claude Code (or run
-   `/reload-plugins`) for it to take effect.
+1. **Permissions** — ensure `permissions.allow` is an array containing the exact
+   string `mcp__plugin_ac2_ac2-channel__*` (add if missing). That wildcard token
+   is `mcp__plugin_<pluginName>_<serverKey>__*` — plugin `ac2`, server key
+   `ac2-channel`.
 
-If the user later "always allows" a tool from the prompt, Claude Code writes the
-canonical rule to `~/.claude/settings.local.json` — that's the source of truth
-for the exact token if anything here looks off.
+2. **Channel master switch** — set `"channelsEnabled": true`.
+
+3. **Channel allowlist** — ensure `allowedChannelPlugins` is an array that
+   contains this object (add it if no entry already has the same `marketplace`
+   AND `plugin`):
+
+   ```json
+   { "marketplace": "goplausible-claude-plugins", "plugin": "ac2" }
+   ```
+
+After writing, tell the user to restart Claude Code (or `/reload-plugins`), then
+launch with `claude --channels plugin:ac2@goplausible-claude-plugins` — no
+`--dangerously-load-development-channels` needed.
+
+Notes:
+- If the user "always allows" a tool from a prompt, Claude Code writes the
+  canonical permission rule to `~/.claude/settings.local.json` — the source of
+  truth for the exact token if anything here looks off.
+- `allowedChannelPlugins` is documented as a managed/admin setting but is honored
+  in a personal user `settings.json`.
