@@ -26,6 +26,63 @@ discovery, and auto-reconnect).
 - **Node 20+** (the runtime — `@roamhq/wrtc` is a native addon that loads in
   Node, not Bun/Deno).
 
+## Installation
+
+```bash
+// Step 1: Add the marketplace (run in Claude Code)
+/plugin marketplace add GoPlausible/claude-algorand-plugin
+
+// Step 2: Install the plugin (run in Claude Code)
+/plugin install ac2-plugin-claude@goplausible-claude-plugins
+```
+
+## Setup
+
+```bash
+// Step 3: One-time setup — run /ac2:setup in Claude Code.
+// This automatically allows the plugin's AC2 tools so you
+// aren't prompted for permission on every message.
+/ac2:setup
+```
+
+`/ac2:setup` applies the settings below for you. This is only the manual
+alternative — add it to `~/.claude/settings.json` (or `.claude/settings.json`)
+yourself if you'd rather not run the setup wizard. Note `channelsEnabled` and
+`allowedChannelPlugins` are **top-level** settings keys (not nested under
+`permissions`):
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_ac2_ac2-channel__*",
+      "Read(/skills/**)",
+      "Read(/references/**)"
+    ]
+  },
+  "channelsEnabled": true,
+  "allowedChannelPlugins": [
+    {
+      "marketplace": "goplausible-claude-plugins",
+      "plugin": "ac2"
+    }
+  ]
+}
+```
+
+```bash
+// Step 4: Start Claude Code with channels enabled (run in your terminal).
+// This flag is REQUIRED — without it the AC2 channel won't load and
+// no messages can be passed between Claude and your wallet.
+claude --dangerously-load-development-channels server:plugin:ac2:ac2-channel
+```
+
+```bash
+// Step 5: Pair your AC2 wallet (e.g. Regent) — run in Claude Code.
+// Shows a QR code + deep link to scan with your wallet.
+/ac2:pair
+```
+
 ## Build model (standalone bundle)
 
 `npm run build` runs [`build.mjs`](./build.mjs), which esbuilds `server.ts` + all
