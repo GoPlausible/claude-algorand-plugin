@@ -85,7 +85,7 @@
       "category": "tools"
     },
     {
-      "name": "ac2",
+      "name": "ac2-plugin-claude",
       "description": "AC2 channel for Claude Code — pair an AC2 wallet (e.g. Regent) over Liquid Auth (FIDO2 + WebRTC) for two-way chat, cryptographic signing, and remote permission approval",
       "source": "./plugins/ac2-plugin-claude/",
       "homepage": "https://goplausible.com",

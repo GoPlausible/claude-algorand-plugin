@@ -14,11 +14,10 @@ Liquid Auth (FIDO2) + WebRTC DataChannels, giving you:
   to approve or deny from your phone.
 
 This is a **Claude Code channel** — an MCP server (stdio) that pushes events into
-a running Claude Code session. It reuses the entire AC2 core from
-[`@goplausible/ac2-plugin-openclaw`](../ac2-plugin-openclaw) (the same
-SessionManager, signing, capabilities, and auto-reconnect), wrapped behind the
+a running Claude Code session, implementing the
 [Claude Code channel contract](https://code.claude.com/docs/en/channels-reference)
-instead of OpenClaw's.
+over an AC2 connection (FIDO2 pairing, WebRTC transport, signing, capability
+discovery, and auto-reconnect).
 
 ## Requirements
 
