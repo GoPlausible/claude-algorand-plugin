@@ -1,5 +1,5 @@
 ---
-name: guide
+name: ac2
 description: "How to use the AC2 channel to get cryptographic signatures from the user's connected wallet (e.g. Regent) over a live WebRTC link. Use this whenever you need to sign or verify something on behalf of the user — wallet sign-in, an Algorand/EVM/Solana message or transaction, an off-chain attestation/VC, or whenever the user asks you to 'sign', 'approve', or 'authorize' with their wallet, even if they don't say 'AC2'. The agent never holds keys; the wallet does."
 ---
 
