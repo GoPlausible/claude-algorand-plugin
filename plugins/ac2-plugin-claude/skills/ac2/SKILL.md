@@ -89,3 +89,21 @@ The `description` is the only thing the user reads before approving — make it 
 ## If there's no connection
 
 These tools require a live AC2 session (the wallet paired and connected). If `ac2_sign` reports no active session, call `ac2_pair` to get a QR code / deep link, show it to the user so they can scan it with their wallet, and check `ac2_status` — don't retry signing in a loop.
+
+## Paying for HTTP resources (x402)
+
+Some HTTP endpoints require a small on-chain payment to access (the **x402** protocol). You can pay for them with the **user's wallet** — you never hold funds; the user approves and signs each payment in-wallet. The tools are all `_ac2`-suffixed (so they never clash with a separate local x402 MCP):
+
+- `x402_discover_payment_requirements_ac2` — probe an endpoint and see what it costs, **without** paying.
+- `make_http_request_with_x402_ac2` — call the endpoint and pay automatically from the wallet. It builds the payment; the user approves + signs in their wallet (e.g. Regent shows the amount, asset, and recipient); then the request is retried with the payment attached.
+- `bazaar_list_ac2` / `bazaar_search_ac2` / `bazaar_get_resource_details_ac2` — browse/search the Bazaar directory of paid API resources (no payment, no wallet needed).
+
+**Before paying:** call `ac2_capabilities` and confirm the wallet has an **Algorand account** (under `accounts.algorand`). The payment comes from that account.
+
+**Choosing the paying account (important):**
+- If the wallet has **exactly one** Algorand account, `make_http_request_with_x402_ac2` uses it automatically — pass nothing extra.
+- If the wallet has **more than one** Algorand account, the tool does NOT guess: it returns `needsPayerSelection: true` with the account list instead of paying. **Ask the user which account to pay from**, then call the tool again with `payerAddress` set to their choice.
+
+**Budget:** pass `maxAmountPerRequest` (USDC atomic units; 1,000,000 = $1.00) to cap spend. If a requirement exceeds it, the call refuses rather than over-paying.
+
+If the tool reports no Algorand account or no live session, tell the user to connect/pair their wallet (or add an Algorand account) — don't retry in a loop.

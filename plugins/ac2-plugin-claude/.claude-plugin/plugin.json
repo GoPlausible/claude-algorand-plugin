@@ -2,7 +2,7 @@
   "name": "ac2",
   "displayName": "AC2 (GoPlausible)",
   "description": "AC2 channel for Claude Code — pair an AC2 wallet (e.g. Regent) over Liquid Auth (FIDO2 + WebRTC) for two-way chat, cryptographic signing/verification, and remote permission approval.",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "author": { "name": "GoPlausible", "email": "info@goplausible.com" },
   "keywords": ["ac2", "wallet", "signing", "liquid-auth", "webrtc", "channel", "mcp", "algorand"]
 }
