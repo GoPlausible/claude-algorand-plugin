@@ -107,3 +107,10 @@ Some HTTP endpoints require a small on-chain payment to access (the **x402** pro
 **Budget:** pass `maxAmountPerRequest` (USDC atomic units; 1,000,000 = $1.00) to cap spend. If a requirement exceeds it, the call refuses rather than over-paying.
 
 If the tool reports no Algorand account or no live session, tell the user to connect/pair their wallet (or add an Algorand account) — don't retry in a loop.
+
+**ALWAYS confirm the payment with an explorer link.** After a successful `make_http_request_with_x402_ac2`, find the on-chain transaction id in the tool's response (it's in the settlement info — typically `paymentResponse`, e.g. a `txId`/`transaction` field; the response also carries `paid.network`) and reply to the user with a clickable explorer link to that transaction, chosen by network:
+
+- **testnet** → `https://lora.algokit.io/testnet/transaction/<TXID>` (Lora)
+- **mainnet** → `https://allo.info/tx/<TXID>` (allo.info)
+
+Example: `Paid 0.5 USDC ✓ — https://lora.algokit.io/testnet/transaction/PH4OF7FW5DIRRFFHSFMN5X722UFUQEA4G4VDUVYVL3LFXZ5RO4SQ`. Always include this link so the user can verify the payment on-chain.
