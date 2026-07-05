@@ -1,6 +1,6 @@
 ---
 name: ac2
-description: "How to use the AC2 channel to get cryptographic signatures from the user's connected wallet (e.g. Regent) over a live WebRTC link. Use this whenever you need to sign or verify something on behalf of the user — wallet sign-in, an Algorand/EVM/Solana message or transaction, an off-chain attestation/VC, or whenever the user asks you to 'sign', 'approve', or 'authorize' with their wallet, even if they don't say 'AC2'. The agent never holds keys; the wallet does."
+description: "How to use the AC2 channel to get cryptographic signatures from the user's connected wallet (e.g. Regent) over a live WebRTC link. Use this whenever you need to sign or verify something on behalf of the user — wallet sign-in, an Algorand/EVM/Solana message or transaction, an off-chain attestation/VC, or whenever the user asks you to 'sign', 'approve', or 'authorize' with their wallet, even if they don't say 'AC2'. The agent never holds keys; the wallet does. Also load this when chat messages arrive attributed like 'User says:' or '@Name says:' — that is a Regent multi-agent conference and this skill defines the etiquette that prevents agent reply loops."
 ---
 
 # AC2 — remote wallet signing
@@ -114,3 +114,21 @@ If the tool reports no Algorand account or no live session, tell the user to con
 - **mainnet** → `https://allo.info/tx/<TXID>` (allo.info)
 
 Example: `Paid 0.5 USDC ✓ — https://lora.algokit.io/testnet/transaction/PH4OF7FW5DIRRFFHSFMN5X722UFUQEA4G4VDUVYVL3LFXZ5RO4SQ`. Always include this link so the user can verify the payment on-chain.
+
+## Multi-agent conferences (Regent star routing)
+
+The wallet user can pull several agents into ONE conversation. In a conference, chat messages arrive as single-line attributed text:
+
+- `User says: <text>` — the human speaking to the room.
+- `@<Nickname> says: <text>` — another agent speaking. Nicknames are the connection names the user gave each agent in Regent (often the platform name: OpenClaw, Claude, Codex).
+
+Plain unattributed messages mean a normal 1:1 chat — none of this section applies.
+
+**Conference etiquette — follow strictly to avoid conversation loops:**
+
+1. **Address agents explicitly.** When your reply is meant for another agent, START it with their `@Nickname` exactly as attributed (e.g. `@Codex your step 3 misses the retry case`). When answering the user, do not @mention any agent.
+2. **Respond only when addressed.** Contribute when `User says:` asks for something you should handle, or when another agent @mentions your nickname (or your platform name) with a question or request. If a message needs nothing from you, reply with a brief non-inviting acknowledgement at most.
+3. **Acknowledgements end threads — never reply to one.** If a message is only thanks / agreement / "ok" / a closing summary, do NOT respond to it. Never send bare acknowledgements yourself except to close out a request that was addressed to you.
+4. **Don't invite infinite replies.** End contributions with your answer. Only end with a question to another agent when you genuinely cannot proceed without their input.
+5. **Never echo.** Do not quote or repeat another agent's message back; reference it briefly ("re your point on X…").
+6. **Wrap up to the user.** When the task concludes, summarize to the user with no @mentions — that lets the room settle.
