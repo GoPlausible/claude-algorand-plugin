@@ -177,3 +177,4 @@ To run without `--dangerously-load-development-channels`, the plugin must be on
 the channel allowlist — either Anthropic's official `claude-plugins-official`
 (partner-coordinated) or an org's `allowedChannelPlugins` managed setting
 (Team/Enterprise). See the channels docs for details.
+
