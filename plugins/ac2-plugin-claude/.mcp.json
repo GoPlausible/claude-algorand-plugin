@@ -6,7 +6,7 @@
       "type": "stdio",
       "command": "npx",
       "args": [
-        "@goplausible/ac2-plugin-claude@0.2.20"
+        "@goplausible/ac2-plugin-claude@0.2.21"
       ]
     }
   }
