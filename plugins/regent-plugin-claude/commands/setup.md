@@ -1,22 +1,22 @@
 ---
-description: One-time setup — enable the AC2 channel + skip per-tool permission prompts
+description: One-time setup — enable the Regent channel + skip per-tool permission prompts
 ---
 
 Claude Code doesn't let a plugin ship its own permission or channel settings, so
 this command writes them into the user's settings on request.
 
-Goals: (a) run the AC2 channel without `--dangerously-load-development-channels`,
-and (b) allow this plugin's MCP tools (`reply`, `ac2_sign`, `ac2_verify_*`,
-`ac2_capabilities`, …) without a per-call permission prompt.
+Goals: (a) run the Regent channel without `--dangerously-load-development-channels`,
+and (b) allow this plugin's MCP tools (`reply`, `regent_sign`, `regent_verify_*`,
+`regent_capabilities`, …) without a per-call permission prompt.
 
 Edit `~/.claude/settings.json` (create it as `{}` if it doesn't exist), making
 ALL of the following changes. Preserve every existing key/entry — only add what's
 missing, never remove or reorder. Then write the file back as valid JSON.
 
 1. **Permissions** — ensure `permissions.allow` is an array containing the exact
-   string `mcp__plugin_ac2_ac2-channel__*` (add if missing). That wildcard token
-   is `mcp__plugin_<pluginName>_<serverKey>__*` — plugin `ac2`, server key
-   `ac2-channel`.
+   string `mcp__plugin_regent_regent-channel__*` (add if missing). That wildcard token
+   is `mcp__plugin_<pluginName>_<serverKey>__*` — plugin `regent`, server key
+   `regent-channel`.
 
 2. **Channel master switch** — set `"channelsEnabled": true`.
 
@@ -25,11 +25,11 @@ missing, never remove or reorder. Then write the file back as valid JSON.
    AND `plugin`):
 
    ```json
-   { "marketplace": "goplausible-claude-plugins", "plugin": "ac2" }
+   { "marketplace": "goplausible-claude-plugins", "plugin": "regent" }
    ```
 
 After writing, tell the user to restart Claude Code (or `/reload-plugins`), then
-launch with `claude --channels plugin:ac2@goplausible-claude-plugins` — no
+launch with `claude --channels plugin:regent@goplausible-claude-plugins` — no
 `--dangerously-load-development-channels` needed.
 
 Notes:
