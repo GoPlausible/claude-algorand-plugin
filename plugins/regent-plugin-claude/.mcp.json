@@ -6,7 +6,7 @@
       "type": "stdio",
       "command": "npx",
       "args": [
-        "@goplausible/regent-plugin-claude@0.2.22"
+        "@goplausible/regent-plugin-claude@1.0.0"
       ]
     }
   }
