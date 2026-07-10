@@ -1,5 +1,5 @@
 ---
-description: Pair an Regent wallet (e.g. Regent) — shows a QR code + deep link to scan
+description: Pair a Regent wallet (e.g. Regent) — shows a QR code + deep link to scan
 ---
 
 Start Regent wallet pairing by calling the `regent_pair` tool.

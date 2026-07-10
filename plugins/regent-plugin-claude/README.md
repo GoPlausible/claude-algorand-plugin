@@ -1,6 +1,6 @@
 # @goplausible/regent-plugin-claude
 
-Regent channel plugin for **Claude Code**. Pairs Claude Code with an Regent wallet
+Regent channel plugin for **Claude Code**. Pairs Claude Code with a Regent wallet
 (e.g. [Regent](https://liquidauth.goplausible.xyz/download/regent.apk)) over
 Liquid Auth (FIDO2) + WebRTC DataChannels, giving you:
 
@@ -16,7 +16,7 @@ Liquid Auth (FIDO2) + WebRTC DataChannels, giving you:
 This is a **Claude Code channel** — an MCP server (stdio) that pushes events into
 a running Claude Code session, implementing the
 [Claude Code channel contract](https://code.claude.com/docs/en/channels-reference)
-over an Regent connection (FIDO2 pairing, WebRTC transport, signing, capability
+over a Regent connection (FIDO2 pairing, WebRTC transport, signing, capability
 discovery, and auto-reconnect).
 
 ## Requirements
@@ -152,9 +152,9 @@ unless you pre-approve them. Do **one** of:
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `Regent_LIQUID_AUTH_SERVER` | `https://liquidauth.goplausible.xyz` | Liquid Auth relay URL |
-| `Regent_AGENT_DID` | auto-generated `did:key` | Stable DID for this agent (persisted at `~/.claude/channels/regent/agent-key.json`) |
-| `Regent_RTC_CONFIG` | — | JSON `RTCConfiguration` overrides (e.g. custom ICE servers) |
+| `REGENT_LIQUID_AUTH_SERVER` | `https://liquidauth.goplausible.xyz` | Liquid Auth relay URL |
+| `REGENT_AGENT_DID` | auto-generated `did:key` | Stable DID for this agent (persisted at `~/.claude/channels/regent/agent-key.json`) |
+| `REGENT_RTC_CONFIG` | — | JSON `RTCConfiguration` overrides (e.g. custom ICE servers) |
 
 State lives under `~/.claude/channels/regent/` (agent key, paired-peer record).
 
@@ -177,4 +177,3 @@ To run without `--dangerously-load-development-channels`, the plugin must be on
 the channel allowlist — either Anthropic's official `claude-plugins-official`
 (partner-coordinated) or an org's `allowedChannelPlugins` managed setting
 (Team/Enterprise). See the channels docs for details.
-
