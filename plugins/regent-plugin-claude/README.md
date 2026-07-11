@@ -30,7 +30,7 @@ discovery, and auto-reconnect).
 
 ```bash
 // Step 1: Add the marketplace (run in Claude Code)
-/plugin marketplace add GoPlausible/claude-algorand-plugin
+/plugin marketplace add GoPlausible/claude-plugins
 
 // Step 2: Install the plugin (run in Claude Code)
 /plugin install regent-plugin-claude@goplausible-claude-plugins

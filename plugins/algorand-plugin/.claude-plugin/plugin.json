@@ -8,7 +8,7 @@
     "url": "https://goplausible.com"
   },
   "homepage": "https://goplausible.com",
-  "repository": "https://github.com/GoPlausible/claude-algorand-plugin",
+  "repository": "https://github.com/GoPlausible/claude-plugins",
   "license": "MIT",
   "keywords": ["algorand", "blockchain", "mcp", "skills", "x402", "typescript", "python"]
 }

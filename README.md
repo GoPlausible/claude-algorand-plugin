@@ -27,7 +27,7 @@ Algorand blockchain integration for [Claude Code](https://claude.ai/code) — by
 Inside Claude Code, add the marketplace and install:
 
 ```
-/plugin marketplace add GoPlausible/claude-algorand-plugin
+/plugin marketplace add GoPlausible/claude-plugins
 /plugin install algorand-plugin@goplausible-claude-plugins
 ```
 
@@ -36,7 +36,7 @@ Inside Claude Code, add the marketplace and install:
 For quick testing without installation, load directly:
 
 ```bash
-claude --plugin-dir /path/to/claude-algorand-plugin
+claude --plugin-dir /path/to/claude-plugins
 ```
 
 > **Note**: `--plugin-dir` is session-scoped — the plugin is only loaded for that session. Use marketplace installation for persistent access from any directory.
@@ -107,7 +107,7 @@ This plugin provides 122 MCP tools. Claude Code automatically **defers** large t
 If you prefer all 122 tools loaded directly into context (no ToolSearch needed), set this environment variable:
 
 ```bash
-ENABLE_TOOL_SEARCH=false claude --plugin-dir /path/to/claude-algorand-plugin
+ENABLE_TOOL_SEARCH=false claude --plugin-dir /path/to/claude-plugins
 ```
 
 Or add to `~/.claude/settings.json`:
