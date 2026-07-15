@@ -2,7 +2,7 @@
   "name": "regent",
   "displayName": "Regent (GoPlausible)",
   "description": "Regent channel for Claude Code — pair a Regent wallet (e.g. Regent) over Liquid Auth (FIDO2 + WebRTC) for two-way chat, cryptographic signing/verification, and remote permission approval.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": {
     "name": "GoPlausible",
     "email": "info@goplausible.com"
